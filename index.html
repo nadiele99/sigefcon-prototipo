@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGEFCON · Oferta formativa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>window.lucide||document.write('<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"><\/script>')</script>
+<style>
+/* =====================================================================
+   1. TOKENS (estrutura — inalterados)
+   ===================================================================== */
+:root{
+  --navy-900:#0F1B33; --navy-800:#122540; --navy-700:#16284F; --navy-600:#1E3A66; --navy-500:#2A4E85;
+  --gray-600:#5B6178; --gray-300:#C9CCD6; --gray-200:#D9D9D9; --gray-100:#EDEEF1;
+  --bg:#E7E8EB; --white:#FFFFFF;
+  --red:#D93025; --red-dark:#B0231A; --green:#1E8E3E; --green-dark:#166C30; --yellow:#F4C430;
+  --text:#1A1D26; --muted:#6B7280;
+  --radius:10px; --shadow:0 2px 10px rgba(0,0,0,.08);
+
+  /* Tokens de componente (padrão shadcn, paleta branco/cinza/azul SEDUC) */
+  --fg:#18181B; --muted-fg:#71717A; --placeholder:#A1A1AA;
+  --border:#E4E4E7; --input:#E4E4E7; --muted-bg:#F4F4F5; --subtle:#FAFAFA;
+  --primary:var(--navy-700); --primary-hover:var(--navy-600);
+  --ring:rgba(42,78,133,.22);
+  --r-sm:6px; --r-md:8px; --r-lg:10px; --r-xl:14px;
+  --shadow-xs:0 1px 2px rgba(16,24,40,.05);
+  --shadow-sm:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+  --shadow-lg:0 12px 32px rgba(16,24,40,.14);
+}
+html,body{margin:0;padding:0;background:#3a3d44;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);}
+*{box-sizing:border-box;}
+
+/* =====================================================================
+   2. ESTRUTURA (inalterada)
+   ===================================================================== */
+.proto-bar{background:#20222A;color:#fff;font-size:13px;padding:10px 18px;position:sticky;top:0;z-index:200;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.proto-bar b{color:#F4C430;}
+.proto-bar .seg{display:flex;gap:4px;background:#2c2f3a;border-radius:8px;padding:3px;}
+.proto-bar .seg button{background:transparent;border:none;color:#cfd6e6;font-size:12px;padding:5px 10px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.proto-bar .seg button:hover{background:var(--navy-600);color:#fff;}
+.proto-bar .seg svg{width:13px;height:13px;}
+
+.shell{display:flex;min-height:100vh;background:var(--bg);}
+.sidebar{display:flex;width:196px;background:var(--navy-900);flex-direction:column;align-items:stretch;padding:18px 14px;gap:16px;flex-shrink:0;}
+.sidebar .avatar{width:38px;height:38px;border-radius:50%;background:var(--navy-600);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;align-self:flex-start;}
+.sidebar-steps{display:flex;flex-direction:column;gap:6px;}
+.sidebar-steps .sidebar-steps-label{color:#6b7590;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:0 2px 2px 2px;}
+.sidebar-steps button{background:transparent;border:1px solid #2c3a5a;color:#9fa3b3;padding:9px 12px;border-radius:8px;font-size:12.5px;cursor:pointer;text-align:left;line-height:1.3;display:flex;align-items:center;gap:8px;}
+.sidebar-steps button svg{width:15px;height:15px;flex-shrink:0;}
+.sidebar-steps button.current{background:var(--yellow);color:#1A1D26;border-color:var(--yellow);font-weight:700;}
+.sidebar-steps button.done{color:#7CD68C;}
+.sidebar-steps button.group{border-color:transparent;color:#cfd6e6;font-weight:700;padding-left:4px;}
+.sidebar-steps button.group .chev{margin-left:auto;transition:transform .15s;}
+.sidebar-steps button.group.closed .chev{transform:rotate(-90deg);}
+.sidebar-steps button.lvl1{margin-left:6px;}
+.sidebar-steps button.lvl2{margin-left:22px;font-size:12px;}
+.sidebar-steps .menu-hint{color:#6b7590;font-size:10.5px;margin:6px 2px 0;line-height:1.4;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.topnav{background:var(--white);margin:16px 16px 0 16px;border-radius:var(--radius);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.topnav .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--navy-700);}
+.topnav .brand .dot{width:30px;height:30px;border-radius:8px;background:var(--navy-700);}
+.topnav .help{color:var(--navy-700);font-size:13px;font-weight:600;}
+.breadcrumb{margin:14px 16px 0 16px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.breadcrumb b{color:var(--text);}
+.breadcrumb svg{width:14px;height:14px;}
+.breadcrumb a{cursor:pointer;color:var(--muted);text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+.content{padding:34px 16px 24px 16px;}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;}
+.card .title-band{background:var(--navy-700);color:#fff;padding:16px 24px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius);margin:0 15px;box-shadow:var(--shadow);position:relative;top:-20px;z-index:5;}
+.card .title-band .tag{background:rgba(255,255,255,.15);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.card .title-band.band-light{flex-wrap:wrap;row-gap:10px;}
+.band-left{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.band-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;display:inline-block;}
+.band-left b{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;}
+.band-sub{font-size:13px;font-weight:400;color:#fff;white-space:nowrap;}
+.card .body{padding:24px;}
+.steps-tab{display:flex;background:var(--gray-200);border-radius:24px;padding:5px;gap:4px;flex-wrap:wrap;}
+.steps-tab span{padding:8px 16px;border-radius:20px;font-size:12.5px;font-weight:700;color:var(--muted);}
+.steps-tab span.active{background:#fff;color:var(--navy-700);} .steps-tab span[onclick]{cursor:pointer;}
+.steps-tab.compact{background:rgba(255,255,255,.15);margin:0;padding:4px;}
+.steps-tab.compact span{color:rgba(255,255,255,.75);padding:6px 13px;}
+.steps-tab.compact span.active{background:#fff;color:var(--navy-700);}
+.footer{background:var(--navy-700);color:#cfd6e6;margin-top:auto;}
+.footer .grad{height:5px;background:linear-gradient(90deg,var(--yellow) 0 33%,var(--green) 33% 66%,#B9BEC9 66% 100%);}
+.footer .in{padding:16px 26px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:10px;}
+.footer .brandline{font-weight:700;color:#fff;}
+.footer .bottom{background:var(--navy-800);text-align:center;padding:8px;font-size:11px;color:#9fb0d1;}
+
+/* =====================================================================
+   3. COMPONENTES — padrão shadcn
+   ===================================================================== */
+.card .body,.overlay,#toast{font-family:"Inter","Segoe UI",Roboto,Arial,sans-serif;font-size:14px;color:var(--fg);-webkit-font-smoothing:antialiased;}
+.stack{display:flex;flex-direction:column;gap:20px;}
+.muted{color:var(--muted-fg);}
+svg.lucide{stroke-width:2;}
+
+/* Button */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 16px;border-radius:var(--r-md);font:500 14px/1 inherit;font-family:inherit;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s,box-shadow .15s;outline:none;}
+.btn svg{width:16px;height:16px;flex-shrink:0;}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--ring);}
+.btn:disabled{opacity:.5;pointer-events:none;}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:var(--shadow-xs);}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-outline{background:#fff;color:var(--fg);border-color:var(--border);box-shadow:var(--shadow-xs);}
+.btn-outline:hover{background:var(--muted-bg);}
+.btn-secondary{background:var(--muted-bg);color:var(--fg);}
+.btn-secondary:hover{background:#E9E9EC;}
+.btn-ghost{background:transparent;color:var(--fg);}
+.btn-ghost:hover{background:var(--muted-bg);}
+.btn-destructive{background:#DC2626;color:#fff;box-shadow:var(--shadow-xs);}
+.btn-destructive:hover{background:#B91C1C;}
+.btn-sm{height:32px;padding:0 12px;font-size:13px;gap:6px;}
+.btn-icon{width:32px;height:32px;padding:0;}
+.btn-icon.danger:hover{color:#DC2626;background:#FEF2F2;}
+.btn-ghost.btn-icon{color:var(--muted-fg);}
+.btn-ghost.btn-icon:hover{color:var(--fg);}
+.btn-link{text-align:left;background:none;border:none;padding:0;height:auto;color:var(--navy-600);font-weight:500;cursor:pointer;font:inherit;}
+.btn-link:hover{text-decoration:underline;text-underline-offset:3px;}
+
+/* Field / Input / Select / Textarea */
+.field{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.field > label{font-size:14px;font-weight:500;line-height:1.2;color:var(--fg);}
+.req{color:#DC2626;margin-left:2px;}
+.hint{font-size:13px;color:var(--muted-fg);line-height:1.4;}
+.input,.field input:not([type=checkbox]):not([type=radio]),.field select,.field textarea,.toolbar select,.tc-toolbar select{
+  width:100%;height:36px;border:1px solid var(--input);border-radius:var(--r-md);padding:0 12px;font:400 14px/1.4 inherit;font-family:inherit;
+  background:#fff;color:var(--fg);box-shadow:var(--shadow-xs);outline:none;transition:border-color .15s,box-shadow .15s;}
+.field textarea{height:auto;min-height:88px;padding:8px 12px;resize:vertical;}
+.field input::placeholder,.field textarea::placeholder,.input::placeholder{color:var(--placeholder);}
+.input:focus,.field input:focus,.field select:focus,.field textarea:focus,.toolbar select:focus,.tc-toolbar select:focus{border-color:var(--navy-500);box-shadow:0 0 0 3px var(--ring);}
+.field input:not([type=checkbox]):not([type=radio])[readonly],.field select:disabled{background:var(--subtle);color:var(--muted-fg);cursor:not-allowed;}
+.field select,.toolbar select,.tc-toolbar select{appearance:none;-webkit-appearance:none;padding-right:34px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;}
+.search{position:relative;display:flex;align-items:center;}
+.search svg{position:absolute;left:11px;width:16px;height:16px;color:var(--muted-fg);pointer-events:none;}
+.search .input{padding-left:34px;}
+.input-group{display:flex;gap:8px;align-items:flex-end;}
+.input-group .field{flex:1;}
+
+/* Checkbox */
+.cb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border:1px solid #D4D4D8;border-radius:4px;background:#fff;box-shadow:var(--shadow-xs);display:inline-grid;place-content:center;cursor:pointer;margin:0;flex-shrink:0;transition:background .15s;}
+.cb:disabled{opacity:.55;cursor:not-allowed;}
+.cb:checked{background:var(--primary);border-color:var(--primary);}
+.cb:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px);}
+.cb:focus-visible{box-shadow:0 0 0 3px var(--ring);outline:none;}
+.rb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border:1px solid #D4D4D8;border-radius:50%;background:#fff;box-shadow:var(--shadow-xs);display:inline-grid;place-content:center;cursor:pointer;margin:0;flex-shrink:0;}
+.rb:checked{border-color:var(--primary);}
+.rb:checked::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);}
+.rb:focus-visible{box-shadow:0 0 0 3px var(--ring);outline:none;}
+.check-list .rb{margin-top:2px;}
+.check-list label:has(.rb:checked){background:#F7F9FC;}
+.check-row{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;}
+
+/* Card (componente) */
+.ui-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-sm);}
+.ui-card-h{display:flex;align-items:flex-start;gap:12px;padding:20px 24px 0;}
+.ui-card-h .ic{width:36px;height:36px;border-radius:var(--r-md);border:1px solid var(--border);box-shadow:var(--shadow-xs);display:grid;place-items:center;color:var(--navy-600);flex-shrink:0;}
+.ui-card-h .ic svg{width:18px;height:18px;}
+.ui-card-title{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.3;}
+.ui-card-desc{font-size:13.5px;color:var(--muted-fg);margin-top:3px;}
+.ui-card-h .right{margin-left:auto;}
+.ui-card-c{padding:20px 24px 24px;}
+
+/* Stat card */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;}
+.stat{padding:20px;}
+.stat-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:14px;font-weight:500;}
+.stat-ico{width:32px;height:32px;border-radius:var(--r-md);display:grid;place-items:center;flex-shrink:0;}
+.stat-ico svg{width:16px;height:16px;}
+.tone-blue{background:#EFF4FB;color:var(--navy-600);} .tone-green{background:#ECFDF3;color:#067647;}
+.tone-amber{background:#FFFAEB;color:#B54708;} .tone-red{background:#FEF3F2;color:#B42318;} .tone-gray{background:var(--muted-bg);color:#3F3F46;}
+.stat .badge{white-space:normal;height:auto;min-height:22px;padding:3px 8px;line-height:1.3;}
+.stat-v{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin:8px 0 12px;}
+.stat-v small{font-size:14px;font-weight:500;color:var(--muted-fg);letter-spacing:0;}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:var(--r-sm);font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;line-height:1;}
+.badge svg{width:12px;height:12px;}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.badge.success{background:#ECFDF3;color:#067647;border-color:#D1FADF;}
+.badge.warning{background:#FFFAEB;color:#B54708;border-color:#FEF0C7;}
+.badge.danger{background:#FEF3F2;color:#B42318;border-color:#FEE4E2;}
+.badge.info{background:#EFF4FB;color:var(--navy-600);border-color:#DCE6F3;}
+.badge.neutral{background:var(--muted-bg);color:#3F3F46;border-color:var(--border);}
+.badge.outline{background:#fff;color:var(--fg);border-color:var(--border);}
+
+/* Alert */
+.alert{display:grid;grid-template-columns:18px 1fr;column-gap:12px;row-gap:2px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--r-lg);background:#fff;line-height:1.5;}
+.alert > svg,.alert > i{width:18px;height:18px;grid-row:span 2;grid-column:1;margin-top:1px;}
+.alert-title,.alert-desc{grid-column:2;}
+.alert.no-title > svg,.alert.no-title > i{grid-row:auto;}
+.alert-title{font-weight:500;}
+.alert-desc{font-size:13.5px;color:var(--muted-fg);}
+.alert-desc b{color:var(--fg);font-weight:500;}
+.alert.info{background:#F7F9FC;border-color:#DCE6F3;} .alert.info > svg{color:var(--navy-600);}
+.alert.warn{background:#FFFBEB;border-color:#FDE68A;} .alert.warn > svg,.alert.warn .alert-title{color:#B45309;} .alert.warn .alert-desc{color:#92400E;} .alert.warn .alert-desc b{color:#78350F;}
+.alert.danger{background:#FEF2F2;border-color:#FECACA;} .alert.danger > svg,.alert.danger .alert-title{color:#B91C1C;}
+
+/* Table */
+.table-card{overflow:hidden;}
+.tc-toolbar{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tc-toolbar .search{width:280px;max-width:100%;}
+.tc-toolbar select{width:auto;min-width:190px;}
+.tc-toolbar .right{margin-left:auto;display:flex;gap:8px;}
+.table-wrap{overflow-x:auto;}
+.table{width:100%;border-collapse:collapse;font-size:14px;}
+.table th{height:40px;padding:0 16px;text-align:left;font-size:13px;font-weight:500;color:var(--muted-fg);background:var(--subtle);border-bottom:1px solid var(--border);white-space:nowrap;}
+.table td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.table tbody tr:last-child td{border-bottom:none;}
+.table tbody tr:hover td{background:var(--subtle);}
+.table tr.past td{color:var(--muted-fg);}
+.table .cell-main{font-weight:500;color:var(--fg);}
+.table .cell-sub{font-size:13px;color:var(--muted-fg);margin-top:2px;}
+.table td.acts{white-space:nowrap;text-align:right;width:1%;}
+.table th.acts{text-align:right;}
+.table .num{font-variant-numeric:tabular-nums;}
+.tc-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--border);font-size:13.5px;color:var(--muted-fg);flex-wrap:wrap;}
+.pagination{display:flex;align-items:center;gap:4px;}
+.page{width:32px;height:32px;border-radius:var(--r-md);border:1px solid transparent;background:transparent;font:500 13px inherit;font-family:inherit;cursor:pointer;color:var(--fg);}
+.page.active{background:var(--primary);color:#fff;}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:36px 16px;gap:6px;}
+.empty .ic{width:40px;height:40px;border-radius:var(--r-lg);background:var(--muted-bg);display:grid;place-items:center;color:var(--muted-fg);margin-bottom:6px;}
+.empty .ic svg{width:20px;height:20px;}
+.empty b{font-weight:500;font-size:14px;}
+.empty span{font-size:13.5px;color:var(--muted-fg);}
+
+/* Layout helpers */
+.grid{display:grid;gap:18px 20px;}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr));} .g3{grid-template-columns:repeat(3,minmax(0,1fr));} .g4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.span2{grid-column:span 2;} .span3{grid-column:span 3;} .span4{grid-column:1/-1;}
+.sep{height:1px;background:var(--border);border:0;margin:0;}
+.form-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.form-actions .group{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* Description list / Item */
+.dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 24px;margin:0;}
+.dl dt{font-size:13px;color:var(--muted-fg);}
+.dl dd{margin:4px 0 0;font-weight:500;}
+.item{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid var(--border);border-radius:var(--r-lg);flex-wrap:wrap;}
+.item .media{width:40px;height:40px;border-radius:var(--r-md);background:#EFF4FB;color:var(--navy-600);display:grid;place-items:center;flex-shrink:0;}
+.item .media svg{width:20px;height:20px;}
+.item .body-i{flex:1;min-width:220px;}
+.item .t{font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.item .d{font-size:13.5px;color:var(--muted-fg);margin-top:3px;}
+.item .a{display:flex;gap:8px;}
+.item.dashed{border-style:dashed;background:var(--subtle);}
+.item.dashed .media{background:var(--muted-bg);color:var(--muted-fg);}
+
+/* Painel: barras horizontais (série única) e listas */
+.bars{display:flex;flex-direction:column;gap:12px;}
+.bar-row{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:12px;font-size:13.5px;border-radius:var(--r-sm);}
+.bar-row .lbl{color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-row .val{text-align:right;font-weight:500;font-variant-numeric:tabular-nums;color:var(--fg);}
+.bar-track{height:10px;background:var(--muted-bg);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--navy-600);border-radius:0 4px 4px 0;min-width:2px;transition:filter .15s;}
+.bar-row:hover .bar-fill{filter:brightness(1.35);}
+.bar-row.click{cursor:pointer;} .bar-row.click:hover .lbl{text-decoration:underline;text-underline-offset:3px;}
+.dash-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.list{display:flex;flex-direction:column;}
+.list-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.list-row:last-child{border-bottom:none;padding-bottom:0;} .list-row:first-child{padding-top:0;}
+.list-row .date{width:44px;height:44px;border-radius:var(--r-md);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1.1;}
+.list-row .date b{font-size:15px;font-weight:600;} .list-row .date span{font-size:11px;color:var(--muted-fg);text-transform:uppercase;}
+.list-row .ico-s{width:32px;height:32px;border-radius:var(--r-md);display:grid;place-items:center;flex-shrink:0;}
+.list-row .ico-s svg{width:16px;height:16px;}
+.list-row .m{flex:1;min-width:0;} .list-row .m .t{font-weight:500;} .list-row .m .d{font-size:13px;color:var(--muted-fg);margin-top:2px;}
+@media (max-width:1000px){.dash-grid{grid-template-columns:1fr;}}
+
+/* Acompanhamento da turma */
+.per-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap;}
+.seg-group{display:inline-flex;height:36px;background:var(--muted-bg);border-radius:10px;padding:3px;gap:2px;}
+.seg-btn{border:0;background:transparent;border-radius:7px;padding:0 14px;font:500 13.5px inherit;font-family:inherit;color:var(--muted-fg);cursor:pointer;}
+.seg-btn.active{background:#fff;color:var(--fg);box-shadow:var(--shadow-xs);}
+.per-nav{display:flex;align-items:center;gap:8px;}
+.per-label{display:inline-flex;align-items:center;gap:8px;font-weight:500;min-width:220px;justify-content:center;}
+.per-label svg{width:16px;height:16px;color:var(--muted-fg);}
+.per-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.per-range{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
+.per-range label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:500;color:var(--muted-fg);}
+.per-range .input{width:auto;}
+.per-label.pick{position:relative;height:36px;padding:0 10px 0 12px;border:1px solid var(--border);border-radius:var(--r-md);background:#fff;box-shadow:var(--shadow-xs);cursor:pointer;transition:background .15s;}
+.per-label.pick:hover{background:var(--subtle);}
+.per-label.pick:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring);}
+.rp-wrap{position:relative;}
+.rp-pop{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:60;width:304px;background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:12px;font-family:"Inter","Segoe UI",sans-serif;user-select:none;}
+.rp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;} .rp-head b{font-size:14px;font-weight:600;}
+.rp-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px;}
+.rp-dow{font-size:12px;color:var(--muted-fg);text-align:center;padding:4px 0 6px;}
+.rp-day{height:36px;border:0;background:transparent;font:400 13.5px inherit;font-family:inherit;color:var(--fg);cursor:pointer;border-radius:var(--r-md);}
+.rp-day:hover{background:var(--muted-bg);}
+.rp-day.out{color:#A1A1AA;}
+.rp-day.today{font-weight:600;box-shadow:inset 0 0 0 1px var(--border);}
+.rp-day.in{background:#EFF4FB;color:var(--navy-700);border-radius:0;}
+.rp-day.in.start{border-radius:var(--r-md) 0 0 var(--r-md);} .rp-day.in.end{border-radius:0 var(--r-md) var(--r-md) 0;} .rp-day.in.start.end{border-radius:var(--r-md);}
+.rp-day.edge{background:var(--primary);color:#fff;font-weight:500;}
+.rp-hint{font-size:12.5px;color:var(--muted-fg);margin:8px 2px;}
+.rp-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rp-inputs label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:500;color:var(--muted-fg);} .rp-inputs .input{height:32px;font-size:13px;padding:0 8px;}
+.rp-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;}
+.pick-chev{margin-left:auto;display:inline-flex;} .pick-chev svg{width:14px;height:14px;}
+.pick-input{position:absolute;left:0;bottom:0;width:100%;height:100%;opacity:0;pointer-events:none;border:0;}
+.pick-select{appearance:none;-webkit-appearance:none;border:0;background:transparent;font:500 14px inherit;font-family:inherit;color:var(--fg);cursor:pointer;padding:0 22px 0 0;margin-right:-22px;outline:none;position:relative;z-index:1;}
+.per-range .muted{padding-bottom:9px;font-size:13px;}
+.seg-btn{display:inline-flex;align-items:center;gap:6px;} .seg-btn svg{width:14px;height:14px;}
+.head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.divider-label{display:flex;align-items:center;gap:12px;margin:4px 0 -4px;color:var(--muted-fg);font-size:12px;font-weight:500;}
+.divider-label::before,.divider-label::after{content:"";flex:1;height:1px;background:var(--border);}
+.divider-label span{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;letter-spacing:.02em;}
+.divider-label svg{width:12px;height:12px;}
+.sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:18px;border-top:1px solid var(--border);}
+.sec-title b{font-size:16px;font-weight:600;letter-spacing:-.01em;} .sec-title span{font-size:13.5px;color:var(--muted-fg);}
+.avatar-s{width:30px;height:30px;border-radius:50%;background:#EFF4FB;color:var(--navy-600);display:grid;place-items:center;font-size:11.5px;font-weight:600;flex-shrink:0;}
+.th-sub{font-size:11px;font-weight:400;color:var(--muted-fg);margin-top:1px;}
+.table th.av-cell,.table td.av-cell{text-align:center;padding-left:8px;padding-right:8px;}
+.table th.av-media,.table td.av-media{text-align:center;background:var(--subtle);}
+.table th.av-cell{line-height:1.15;padding-top:6px;padding-bottom:6px;}
+.freq{display:flex;align-items:center;gap:10px;}
+.freq .progress{width:90px;height:6px;flex-shrink:0;}
+
+/* Progress */
+.progress{height:8px;background:var(--muted-bg);border-radius:999px;overflow:hidden;}
+.progress > div{height:100%;background:var(--primary);border-radius:999px;}
+.progress.over > div{background:#DC2626;}
+
+/* Mini lista (formadores no formulário) */
+.mini-list{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-top:16px;}
+
+/* Dialog */
+.overlay{position:fixed;inset:0;background:rgba(9,9,11,.5);z-index:300;display:flex;align-items:flex-start;justify-content:center;padding:80px 16px;overflow:auto;animation:fade .15s ease;}
+.dialog{position:relative;background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);width:100%;max-width:520px;padding:24px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;gap:18px;animation:zoom .15s ease;}
+.dialog-h h3{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em;}
+.dialog-h p{margin:6px 0 0;color:var(--muted-fg);font-size:14px;line-height:1.5;}
+.dialog-x{position:absolute;top:14px;right:14px;}
+.dialog-b{display:flex;flex-direction:column;gap:16px;}
+.dialog-f{display:flex;justify-content:flex-end;gap:8px;}
+.check-list{border:1px solid var(--border);border-radius:var(--r-lg);max-height:220px;overflow:auto;}
+.check-list label{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;}
+.check-list label:last-child{border-bottom:none;}
+.check-list label:hover{background:var(--subtle);}
+.check-list .cb{margin-top:2px;}
+.check-list .t{font-weight:500;} .check-list .s{font-size:13px;color:var(--muted-fg);margin-top:2px;}
+/* Modal grande (formulários) e seções internas */
+.dialog.lg{max-width:960px;}
+.overlay.l2{z-index:310;background:rgba(9,9,11,.35);}
+.fsec-h{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.fsec-h .ic{width:30px;height:30px;border-radius:var(--r-md);border:1px solid var(--border);display:grid;place-items:center;color:var(--navy-600);flex-shrink:0;}
+.fsec-h .ic svg{width:15px;height:15px;}
+.fsec-h b{display:block;font-size:14px;font-weight:600;}
+.fsec-h span{display:block;font-size:13px;color:var(--muted-fg);margin-top:1px;}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes zoom{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+
+/* Toast (sonner) */
+#toast{position:fixed;right:20px;bottom:20px;z-index:400;display:flex;flex-direction:column;gap:8px;width:360px;max-width:calc(100vw - 40px);}
+.toast{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;box-shadow:0 6px 18px rgba(16,24,40,.1);font-size:13.5px;line-height:1.45;animation:zoom .15s ease;}
+.toast svg{width:16px;height:16px;margin-top:1px;flex-shrink:0;color:#16A34A;}
+.toast.err svg{color:#DC2626;}
+
+@media (max-width:1000px){.g4{grid-template-columns:repeat(2,minmax(0,1fr));}.g3,.dl{grid-template-columns:repeat(2,minmax(0,1fr));}.span3{grid-column:1/-1;}}
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <div><b>SIGEFCON</b> · protótipo de fluxo (baixa fidelidade) — Formações, Turmas e Encontros</div>
+  <div class="seg"><button onclick="resetData()"><i data-lucide="rotate-ccw"></i>Reiniciar dados</button></div>
+</div>
+
+<div id="app"></div>
+<div id="modal-root"></div>
+<div id="modal-root2"></div>
+<div id="toast"></div>
+
+<script>
+/* =========================================================
+   DADOS DE EXEMPLO (em memória — sem localStorage)
+   ========================================================= */
+const TODAY = '2026-10-06';
+
+function seed(){
+  return {
+    seq:{ formacao:7, turma:18, encontro:18, local:5 },
+    locais:[
+      {id:'L1', nome:'Coordenadoria Distrital 1', municipio:'Manaus', endereco:'Av. Djalma Batista, s/n'},
+      {id:'L2', nome:'Centro de Formação – Sala 3', municipio:'Manaus', endereco:'Rua Recife, 1520'},
+      {id:'L3', nome:'Polo Tabatinga', municipio:'Tabatinga', endereco:'Av. da Amizade, 300'},
+      {id:'L4', nome:'Polo Parintins', municipio:'Parintins', endereco:'Rua Gomes de Castro, 85'},
+    ],
+    formadores:[
+      {id:'P1', nome:'Ana Ribeiro', esp:'Planilhas eletrônicas'},
+      {id:'P2', nome:'Carlos Menezes', esp:'DevOps e versionamento'},
+      {id:'P3', nome:'Juliana Prado', esp:'Alfabetização'},
+      {id:'P4', nome:'Marcos Tavares', esp:'Linguagens'},
+      {id:'P5', nome:'Renata Lopes', esp:'Programação'},
+    ],
+    formacoes:[
+      {id:'F1', codigo:'FOR-2026-0001', titulo:'Excel Avançado', ementa:'Funções lógicas e de pesquisa, tabelas dinâmicas, gráficos e automação básica com macros aplicadas à rotina administrativa.', carga:40, modalidade:'Presencial', publico:'Técnicos administrativos', projeto:'', area:'Gestão', tematica:'Ferramentas de produtividade', situacao:'Ativa'},
+      {id:'F2', codigo:'FOR-2026-0002', titulo:'GitLab para equipes', ementa:'Repositórios, branches, merge requests, revisão de código e pipelines de integração contínua.', carga:20, modalidade:'Híbrido', publico:'Equipes de tecnologia', projeto:'Transformação Digital', area:'Tecnologia', tematica:'Versionamento de código', situacao:'Ativa'},
+      {id:'F3', codigo:'FOR-2026-0003', titulo:'Alfabetização e Letramento', ementa:'Consciência fonológica, práticas de leitura e escrita, avaliação diagnóstica e intervenção pedagógica nos anos iniciais.', carga:60, modalidade:'Presencial', publico:'Professores do 1º ao 3º ano', projeto:'Alfabetiza Amazonas', area:'Língua Portuguesa', tematica:'Alfabetização', situacao:'Ativa'},
+      {id:'F4', codigo:'FOR-2026-0004', titulo:'Python básico', ementa:'Lógica de programação, tipos de dados, estruturas de controle, funções e manipulação de arquivos.', carga:30, modalidade:'Híbrido', publico:'Equipes de tecnologia', projeto:'Transformação Digital', area:'Tecnologia', tematica:'Programação', situacao:'Ativa'},
+      {id:'F5', codigo:'FOR-2026-0005', titulo:'Gestão de Sala de Aula', ementa:'Planejamento de aulas, rotinas, mediação de conflitos e uso de dados de aprendizagem na tomada de decisão.', carga:24, modalidade:'EAD', publico:'Professores da rede estadual', projeto:'', area:'Pedagogia', tematica:'Gestão pedagógica', situacao:'Pausada'},
+      {id:'F6', codigo:'FOR-2025-0019', titulo:'Introdução ao Moodle', ementa:'Navegação no ambiente virtual, criação de atividades, fóruns e acompanhamento de participação.', carga:16, modalidade:'EAD', publico:'Professores da rede estadual', projeto:'', area:'Tecnologia Educacional', tematica:'Ambientes virtuais', situacao:'Desativada'},
+    ],
+    turmas:[
+      {id:'T1', codigo:'TUR-2026-0011', nome:'GETAG – Turma A', formacaoId:'F2', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Híbrido', vagas:30, inscritos:28, inscIni:'2026-09-01', inscFim:'2026-09-15', realIni:'2026-09-21', realFim:'2026-10-30', turno:'Tarde', hIni:'14:00', hFim:'17:00', localId:'L2', formadores:[{formadorId:'P2', papel:'Titular', carga:20}]},
+      {id:'T2', codigo:'TUR-2026-0012', nome:'NIG – Turma A', formacaoId:'F1', publico:'Servidores do NIG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Presencial', vagas:25, inscritos:12, inscIni:'2026-10-01', inscFim:'2026-10-20', realIni:'2026-10-26', realFim:'2026-12-04', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L1', formadores:[{formadorId:'P1', papel:'Titular', carga:40}]},
+      {id:'T3', codigo:'TUR-2026-0013', nome:'Tabatinga – Turma 1', formacaoId:'F3', publico:'Professores da rede estadual', etapa:'Ensino Fundamental – Anos Iniciais', modEnsino:'Regular', modalidade:'Presencial', vagas:35, inscritos:35, inscIni:'2026-08-01', inscFim:'2026-08-20', realIni:'2026-08-25', realFim:'2026-10-10', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L3', formadores:[{formadorId:'P3', papel:'Titular', carga:40},{formadorId:'P4', papel:'Auxiliar', carga:20}]},
+      {id:'T4', codigo:'TUR-2026-0014', nome:'GETAG – Turma B', formacaoId:'F4', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Híbrido', vagas:30, inscritos:0, inscIni:'2026-11-03', inscFim:'2026-11-14', realIni:'2026-11-23', realFim:'2026-12-18', turno:'Tarde', hIni:'14:00', hFim:'17:00', localId:'L2', formadores:[]},
+      {id:'T5', codigo:'TUR-2026-0015', nome:'Parintins – Turma 1', formacaoId:'F3', publico:'Professores da rede estadual', etapa:'Ensino Fundamental – Anos Iniciais', modEnsino:'Regular', modalidade:'Presencial', vagas:35, inscritos:9, inscIni:'2026-10-05', inscFim:'2026-10-16', realIni:'2026-10-19', realFim:'2026-11-27', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L4', formadores:[{formadorId:'P3', papel:'Titular', carga:60}]},
+      {id:'T6', codigo:'TUR-2026-0006', nome:'Manaus – Turma Piloto', formacaoId:'F3', publico:'Professores da rede estadual', etapa:'Ensino Fundamental – Anos Iniciais', modEnsino:'Regular', modalidade:'Presencial', vagas:30, inscritos:30, inscIni:'2026-04-01', inscFim:'2026-04-15', realIni:'2026-04-22', realFim:'2026-06-10', turno:'Tarde', hIni:'14:00', hFim:'18:00', localId:'L1', formadores:[{formadorId:'P3', papel:'Titular', carga:60}]},
+      {id:'T7', codigo:'TUR-2026-0007', nome:'GETAG – Turma Excel', formacaoId:'F1', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Presencial', vagas:20, inscritos:18, inscIni:'2026-05-04', inscFim:'2026-05-15', realIni:'2026-05-25', realFim:'2026-07-03', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L2', formadores:[{formadorId:'P1', papel:'Titular', carga:40}]},
+    ],
+    encontros:[]
+  };
+}
+
+let DB;
+function buildEncontros(){
+  const add = (turmaId, datas, ini, fim) => datas.forEach(d => DB.encontros.push({id:'E'+(DB.encontros.length+1), codigo:'ENC-2026-'+String(DB.encontros.length+1).padStart(4,'0'), turmaId, data:d, ini, fim, obs:''}));
+  add('T1', ['2026-09-22','2026-09-29','2026-10-06','2026-10-13','2026-10-20','2026-10-27'], '14:00','17:00');
+  add('T3', ['2026-08-26','2026-09-02','2026-09-09','2026-09-16','2026-09-23','2026-09-30','2026-10-07'], '08:00','12:00');
+  add('T2', ['2026-10-27','2026-11-03'], '08:00','12:00');
+  add('T6', ['2026-04-22','2026-04-29','2026-05-06','2026-05-13','2026-05-20','2026-05-27','2026-06-03','2026-06-10'], '14:00','18:00');
+  add('T7', ['2026-05-25','2026-06-01','2026-06-08','2026-06-15','2026-06-22','2026-06-29','2026-07-03'], '08:00','12:00');
+  DB.seq.encontro = DB.encontros.length + 1;
+}
+function resetData(){ DB = seed(); buildEncontros(); S.visited = new Set(); S.filtroFormacao='todas'; S.filtroTurma='todas'; go('painel'); toast('Dados de exemplo restaurados.'); }
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+const S = { per:{modo:'mensal', ref:TODAY}, perP:{modo:'mensal', ref:TODAY, ini:null, fim:null}, screen:'painel', params:{}, visited:new Set(), menuOpen:true, filtroFormacao:'todas', filtroTurma:'todas', draft:[] };
+
+const MENU = [
+  {id:'painel', label:'Painel', icon:'layout-dashboard', lvl:1},
+  {id:'formacoes', label:'Formações', icon:'book-open', lvl:1},
+  {id:'turmas', label:'Turmas', icon:'users', lvl:1},
+  {id:'encontros', label:'Encontros', icon:'calendar-days', lvl:2},
+];
+const SECTION = { 'painel':'painel', 'formacoes':'formacoes', 'formacao-painel':'formacoes', 'formacao-form':'formacoes', 'turmas':'turmas', 'turma-form':'turmas', 'turma-detalhe':'turmas', 'encontros':'encontros' };
+
+/* =========================================================
+   UTILITÁRIOS
+   ========================================================= */
+const $ = id => document.getElementById(id);
+function icons(){ if (window.lucide && lucide.createIcons) lucide.createIcons(); }
+window.addEventListener('load', icons);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = d => d ? d.split('-').reverse().join('/') : '—';
+const fById = id => DB.formacoes.find(f => f.id === id);
+const tById = id => DB.turmas.find(t => t.id === id);
+const lById = id => DB.locais.find(l => l.id === id);
+const pById = id => DB.formadores.find(p => p.id === id);
+/* 1 turma = 1 formação */
+const formDaTurma = t => fById(t.formacaoId);                 /* 1 turma = 1 formação (TURMA.id_curso) */
+const formsDaTurma = t => [formDaTurma(t)].filter(Boolean);
+const turmasDaFormacao = fid => DB.turmas.filter(t => t.formacaoId === fid);
+/* ---- Inscritos, frequência e avaliação (dados fictícios, determinísticos) ----
+   Modelo: INSCRICAO/MATRICULA (por turma) · FREQUENCIA (matrícula × encontro) · RESPOSTA_AVALIACAO */
+const NOMES = ['Ana Paula Souza','Bruno Lima','Carla Menezes','Daniel Rocha','Elaine Batista','Fábio Nogueira','Gabriela Freitas','Hugo Albuquerque','Isabela Costa','João Victor Reis','Karina Lopes','Leandro Pinheiro','Mariana Tavares','Nelson Farias','Olívia Ramos','Paulo Henrique Dias','Queila Martins','Rafael Moura','Sabrina Teixeira','Tiago Barros','Úrsula Campos','Vinícius Prado','Wanessa Lima','Xavier Monteiro','Yasmin Cardoso','Zeca Andrade','Aline Furtado','Caio Bezerra','Débora Sales','Everton Maia','Flávia Rezende','Gustavo Peixoto','Helena Queiroz','Igor Vasconcelos','Jéssica Amaral'];
+function hsh(str){ let h = 2166136261; for (const c of str){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return (h >>> 0) / 4294967295; }
+const _insc = {};
+function inscritosDaTurma(t){
+  const key = t.id + ':' + t.inscritos;
+  if (_insc[key]) return _insc[key];
+  const off = Math.floor(hsh(t.id) * NOMES.length);
+  return _insc[key] = Array.from({length:t.inscritos}, (_, i) => {
+    const id = t.id + '-I' + (i+1), perfil = hsh(id + 'p');      /* alguns docentes faltam mais */
+    const taxa = perfil < .15 ? .55 : perfil < .35 ? .8 : .95;
+    const respondeu = hsh(id + 'r') < .8;
+    const notas = [0,1,2,3].map(k => hsh(id + 'r' + k) < .85 ? Math.round(55 + hsh(id + 'a' + k) * 45) : null);   /* null = não respondeu */
+    return { id, nome: NOMES[(off + i) % NOMES.length], taxa, notas };
+  });
+}
+/* Tabela de inscritos com busca e paginação (10 por página) */
+/* 4 avaliações por turma (mínimo provisório), distribuídas no período de realização: 25%, 50%, 75% e fim */
+const N_AVAL = 4;
+function avaliacoesDaTurma(t){
+  const a = new Date(t.realIni + 'T12:00:00'), b = new Date(t.realFim + 'T12:00:00'), dur = b - a;
+  return Array.from({length:N_AVAL}, (_, k) => {
+    const d = new Date(a.getTime() + dur * (k+1) / N_AVAL), data = d.toISOString().slice(0,10);
+    return { n: k+1, data, aplicada: data <= TODAY };
+  });
+}
+const mediaNotas = arr => { const v = arr.filter(x => typeof x === 'number'); return v.length ? Math.round(v.reduce((a,x)=>a+x,0) / v.length) : null; };
+
+function renderInsc(){
+  const el = $('insc-wrap'); if (!el || !S.acomp) return;
+  const { linhas, avs } = S.acomp, POR = 10;
+  const q = (S.inscQ || '').trim().toLowerCase();
+  const lista = linhas.filter(l => l.nome.toLowerCase().includes(q));
+  const pags = Math.max(1, Math.ceil(lista.length / POR)), pag = Math.min(S.inscPage || 1, pags);
+  const vis = lista.slice((pag-1)*POR, pag*POR);
+  const rows = vis.map(l => `<tr>
+    <td><div style="display:flex;align-items:center;gap:10px"><span class="avatar-s">${esc(l.nome.split(' ').map(x=>x[0]).slice(0,2).join(''))}</span><span class="cell-main">${esc(l.nome)}</span></div></td>
+    <td class="num">${l.pres}</td><td class="num">${l.falt}</td>
+    <td>${l.freq===null ? '<span class="muted">—</span>' : `<div class="freq"><div class="progress ${l.freq<75?'over':''}"><div style="width:${l.freq}%"></div></div><span class="num">${l.freq}%</span>${l.freq<75?'<span class="badge danger">Abaixo de 75%</span>':''}</div>`}</td>
+    ${avs.map((av,k) => `<td class="num av-cell">${!av.aplicada ? `<span class="muted" title="Aplicação prevista em ${fmt(av.data)}">—</span>` : l.notas[k]===null ? '<span class="badge neutral" title="Não respondeu">NR</span>' : `${l.notas[k]}%`}</td>`).join('')}
+    <td class="num av-media">${l.media===null ? '<span class="muted">—</span>' : `<b>${l.media}%</b>`}</td></tr>`).join('');
+  const ini = lista.length ? (pag-1)*POR + 1 : 0, fim = (pag-1)*POR + vis.length;
+  el.innerHTML = `<div class="table-wrap"><table class="table"><thead><tr><th>Nome</th><th>Presenças</th><th>Faltas</th><th>Frequência</th>${avs.map(av => `<th class="av-cell" title="${av.aplicada ? 'Aplicada' : 'Prevista'} em ${fmt(av.data)}">Av. ${av.n}<div class="th-sub">${fmt(av.data).slice(0,5)}${av.aplicada ? '' : ' · prevista'}</div></th>`).join('')}<th class="av-media">Média</th></tr></thead>
+    <tbody>${rows || emptyRow(5 + avs.length, 'users-round', linhas.length ? 'Nenhum inscrito encontrado' : 'Nenhum inscrito', linhas.length ? 'Ajuste a busca.' : 'As inscrições aparecem aqui quando o período de inscrição for aberto.')}</tbody></table></div>
+    <div class="tc-footer"><span>Mostrando ${ini}–${fim} de ${lista.length} inscritos</span>
+      <div class="pagination"><button class="btn btn-ghost btn-sm" ${pag<=1?'disabled':''} onclick="S.inscPage=${pag-1};renderInsc()">${ico('chevron-left')}Anterior</button>
+        ${Array.from({length:pags},(_,i)=>`<button class="page ${i+1===pag?'active':''}" onclick="S.inscPage=${i+1};renderInsc()">${i+1}</button>`).join('')}
+        <button class="btn btn-ghost btn-sm" ${pag>=pags?'disabled':''} onclick="S.inscPage=${pag+1};renderInsc()">Próxima${ico('chevron-right')}</button></div></div>`;
+  icons();
+}
+const encRealizado = e => e.data <= TODAY;  /* frequência lançada para encontros já ocorridos (inclui o de hoje) */
+const presente = (insc, e) => hsh(insc.id + e.id) < insc.taxa;
+/* Intervalo do filtro de período */
+/* ---- Filtro de período reutilizável ----
+   Estado: { modo: 'semanal'|'mensal'|'anual'|'periodo', ref, ini, fim }
+   S.per = acompanhamento da turma · S.perP = painel geral */
+function periodo(st){
+  const d = new Date(st.ref + 'T12:00:00'), iso = x => x.toISOString().slice(0,10);
+  const MES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  if (st.modo === 'dia') return { ini: st.ref, fim: st.ref, label: st.ref === TODAY ? `Hoje · ${fmt(st.ref)}` : fmt(st.ref) };
+  if (st.modo === 'semanal' && st.wIni){
+    const dIni = new Date(st.wIni + 'T12:00:00'), dias = Math.round((new Date(st.wFim + 'T12:00:00') - dIni) / 864e5);
+    const semanaCheia = dias === 6 && dIni.getDay() === 1;
+    return { ini: st.wIni, fim: st.wFim, label: semanaCheia ? `Semana de ${fmt(st.wIni).slice(0,5)} a ${fmt(st.wFim)}` : `De ${fmt(st.wIni).slice(0,5)} a ${fmt(st.wFim)}` };
+  }
+  if (st.modo === 'semanal'){ const dw = (d.getDay() + 6) % 7; const a = new Date(d); a.setDate(d.getDate() - dw); const b = new Date(a); b.setDate(a.getDate() + 6);
+    return { ini: iso(a), fim: iso(b), label: `Semana de ${fmt(iso(a)).slice(0,5)} a ${fmt(iso(b))}` }; }
+  if (st.modo === 'mensal'){ const a = new Date(d.getFullYear(), d.getMonth(), 1, 12), b = new Date(d.getFullYear(), d.getMonth()+1, 0, 12);
+    return { ini: iso(a), fim: iso(b), label: `${MES[d.getMonth()][0].toUpperCase() + MES[d.getMonth()].slice(1)} de ${d.getFullYear()}` }; }
+  if (st.modo === 'periodo') return { ini: st.ini, fim: st.fim, label: `De ${fmt(st.ini)} a ${fmt(st.fim)}` };
+  return { ini: `${d.getFullYear()}-01-01`, fim: `${d.getFullYear()}-12-31`, label: `Ano de ${d.getFullYear()}` };
+}
+function addDiasISO(iso, n){ const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0,10); }
+function moverPeriodo(dir, key = 'per'){
+  const st = S[key], d = new Date(st.ref + 'T12:00:00');
+  if (st.modo === 'dia') d.setDate(d.getDate() + dir);
+  else if (st.modo === 'semanal' && st.wIni){ st.wIni = addDiasISO(st.wIni, 7*dir); st.wFim = addDiasISO(st.wFim, 7*dir); return render(); }
+  else if (st.modo === 'semanal') d.setDate(d.getDate() + 7*dir);
+  else if (st.modo === 'mensal') d.setMonth(d.getMonth() + dir, 1);
+  else d.setFullYear(d.getFullYear() + dir);
+  st.ref = d.toISOString().slice(0,10); render();
+}
+function setRange(campo, valor, key = 'per'){
+  if (!valor) return;
+  const st = S[key];
+  const ini = campo === 'ini' ? valor : st.ini, fim = campo === 'fim' ? valor : st.fim;
+  if (ini > fim) { render(); return toast('A data de início não pode ser posterior à data de fim.', 'err'); }
+  st.ini = ini; st.fim = fim; render();
+}
+/* Rótulo central do filtro: é o próprio seletor (exceto no mensal, que fica fixo) */
+function perPicker(key, st, per){
+  const chev = `<span class="pick-chev">${ico('chevron-down')}</span>`;
+  if (st.modo === 'semanal'){
+    return `<div class="rp-wrap"><div class="per-label pick" role="button" tabindex="0" title="Selecionar o período no calendário" onclick="abrirRange('${key}')">${ico('calendar-range')}${per.label}${chev}</div><div id="rp-host"></div></div>`;
+  }
+  if (st.modo === 'dia'){
+    return `<div class="per-label pick" role="button" tabindex="0" title="Escolher o dia" onclick="abrirPicker(this)">
+      ${ico('calendar')}${per.label}${chev}
+      <input type="date" class="pick-input" value="${st.ref}" onchange="if(this.value){S.${key}.ref=this.value;render()}" tabindex="-1"></div>`;
+  }
+  if (st.modo === 'anual'){
+    const atual = +st.ref.slice(0,4), anos = [];
+    for (let y = 2024; y <= 2028; y++) anos.push(y);
+    return `<div class="per-label pick">${ico('calendar')}
+      <select class="pick-select" title="Escolher o ano" onchange="S.${key}.ref=this.value+'-'+S.${key}.ref.slice(5);render()">${anos.map(y => `<option value="${y}" ${y===atual?'selected':''}>Ano de ${y}</option>`).join('')}</select>${chev}</div>`;
+  }
+  return `<span class="per-label">${ico('calendar')}${per.label}</span>`;   /* mensal: fixo, navega pelas setas */
+}
+/* ---- Calendário de intervalo (estilo shadcn Calendar mode="range") ---- */
+function abrirRange(key){
+  if (S.rp && S.rp.key === key){ S.rp = null; return renderRP(); }
+  const per = periodo(S[key]);
+  S.rp = { key, mes: per.ini.slice(0,7), a: per.ini, b: per.fim, hover: null, drag: false };
+  renderRP();
+}
+function rpLimites(){
+  const { a, b, hover } = S.rp, fim = b || hover;
+  if (!a) return [null, null];
+  if (!fim) return [a, a];
+  return a <= fim ? [a, fim] : [fim, a];
+}
+function renderRP(){
+  const host = document.getElementById('rp-host'); if (!host) return;
+  if (!S.rp){ host.innerHTML = ''; return; }
+  const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const [y, m] = S.rp.mes.split('-').map(Number);
+  const primeiro = new Date(y, m-1, 1, 12), offset = (primeiro.getDay() + 6) % 7;
+  const inicio = new Date(primeiro); inicio.setDate(1 - offset);
+  const [lo, hi] = rpLimites();
+  let cells = '';
+  for (let i = 0; i < 42; i++){
+    const d = new Date(inicio); d.setDate(inicio.getDate() + i);
+    const iso = d.toISOString().slice(0,10), fora = d.getMonth() !== m-1;
+    const dentro = lo && iso >= lo && iso <= hi, ponta = iso === lo || iso === hi;
+    cells += `<button type="button" data-d="${iso}" class="rp-day ${fora?'out':''} ${dentro?'in':''} ${ponta?'edge':''} ${iso===lo?'start':''} ${iso===hi?'end':''} ${iso===TODAY?'today':''}"
+      onmousedown="event.preventDefault();event.stopPropagation();rpDown('${iso}')" onmouseenter="rpEnter('${iso}')">${d.getDate()}</button>`;
+  }
+  const dias = lo ? Math.round((new Date(hi+'T12:00:00') - new Date(lo+'T12:00:00')) / 864e5) + 1 : 0;
+  host.innerHTML = `<div class="rp-pop" role="dialog" aria-label="Selecionar período">
+    <div class="rp-head">
+      <button type="button" class="btn btn-ghost btn-icon" onclick="rpMes(-1)" title="Mês anterior">${ico('chevron-left')}</button>
+      <b>${MESES[m-1]} ${y}</b>
+      <button type="button" class="btn btn-ghost btn-icon" onclick="rpMes(1)" title="Próximo mês">${ico('chevron-right')}</button>
+    </div>
+    <div class="rp-grid">${['S','T','Q','Q','S','S','D'].map(x => `<span class="rp-dow">${x}</span>`).join('')}${cells}</div>
+    <p class="rp-hint" id="rp-hint">${S.rp.a && !S.rp.b ? 'Clique no dia final ou arraste sobre os dias.' : 'Clique no dia inicial e no final, ou arraste para selecionar.'}</p>
+    <div class="rp-inputs">
+      <label>Início<input type="date" class="input" id="rp-ini" value="${lo||''}" onchange="rpCampo('a', this.value)"></label>
+      <label>Fim<input type="date" class="input" id="rp-fim" value="${hi||''}" onchange="rpCampo('b', this.value)"></label>
+    </div>
+    <div class="rp-foot">
+      <span class="muted" id="rp-dias">${dias ? `${dias} dia(s)` : ''}</span>
+      <div style="display:flex;gap:8px"><button type="button" class="btn btn-outline btn-sm" onclick="S.rp=null;renderRP()">Cancelar</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="rpAplicar()" ${lo ? '' : 'disabled'}>Aplicar</button></div>
+    </div>
+  </div>`;
+  icons();
+}
+function paintRP(){
+  const [lo, hi] = rpLimites();
+  document.querySelectorAll('.rp-day[data-d]').forEach(el => {
+    const d = el.dataset.d, dentro = !!lo && d >= lo && d <= hi;
+    el.classList.toggle('in', dentro); el.classList.toggle('edge', d === lo || d === hi);
+    el.classList.toggle('start', d === lo); el.classList.toggle('end', d === hi);
+  });
+  const dias = lo ? Math.round((new Date(hi+'T12:00:00') - new Date(lo+'T12:00:00')) / 864e5) + 1 : 0;
+  const ini = $('rp-ini'), fim = $('rp-fim'), n = $('rp-dias'), hint = $('rp-hint');
+  if (ini) ini.value = lo || ''; if (fim) fim.value = hi || ''; if (n) n.textContent = dias ? `${dias} dia(s)` : '';
+  if (hint) hint.textContent = S.rp.a && !S.rp.b ? 'Clique no dia final ou arraste sobre os dias.' : 'Clique no dia inicial e no final, ou arraste para selecionar.';
+}
+function rpDown(iso){
+  const r = S.rp;
+  if (r.a && !r.b && iso !== r.a){ r.b = iso; r.hover = null; return paintRP(); }   /* segundo clique = dia final */
+  r.a = iso; r.b = null; r.hover = iso; r.drag = true; paintRP();
+}
+function rpEnter(iso){
+  const r = S.rp;
+  if (!r || (!r.drag && r.b) || r.hover === iso) return;
+  r.hover = iso; paintRP();
+}
+function rpUp(){
+  const r = S.rp; if (!r || !r.drag) return;
+  r.drag = false;
+  if (r.hover && r.hover !== r.a){ r.b = r.hover; r.hover = null; }                 /* arraste concluído */
+  paintRP();
+}
+function rpMes(dir){ const [y, m] = S.rp.mes.split('-').map(Number); const d = new Date(y, m-1+dir, 1, 12); S.rp.mes = d.toISOString().slice(0,7); renderRP(); }
+function rpCampo(campo, v){
+  if (!v) return;
+  S.rp[campo] = v; if (campo === 'a' && !S.rp.b) S.rp.b = v;
+  S.rp.hover = null; S.rp.mes = v.slice(0,7); renderRP();
+}
+function rpAplicar(){
+  const [lo, hi] = rpLimites(), st = S[S.rp.key];
+  st.wIni = lo; st.wFim = hi; S.rp = null; render();
+}
+document.addEventListener('mouseup', () => rpUp());
+document.addEventListener('mousedown', e => {   /* clique fora fecha (ignora elementos que acabaram de ser redesenhados) */
+  if (S.rp && e.target.isConnected && !e.target.closest('.rp-wrap')){ S.rp = null; renderRP(); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.rp){ S.rp = null; renderRP(); } });
+
+function abrirPicker(el){
+  const i = el.querySelector('input');
+  try { i.showPicker(); } catch (e) { i.focus(); i.click(); }
+}
+/* Barra do filtro (mesmo componente na turma e no painel) */
+function perBar(key, resetIni, resetFim, resetLabel){
+  const st = S[key];
+  if (st.modo === 'periodo' && !st.ini){ st.ini = resetIni; st.fim = resetFim; }
+  const per = periodo(st);
+  const seg = [['dia','Dia'],['semanal','Semanal'],['mensal','Mensal'],['anual','Anual'],['periodo','Período']].map(([m,lbl]) =>
+    `<button class="seg-btn ${st.modo===m?'active':''}" onclick="S.${key}.modo='${m}';${m!=='periodo' ? `S.${key}.ref=TODAY;S.${key}.wIni=S.${key}.wFim=null;` : ''}render()">${m==='periodo'?ico('calendar-range'):''}${lbl}</button>`).join('');
+  return `<div class="ui-card per-bar">
+    <div class="seg-group">${seg}</div>
+    ${st.modo === 'periodo' ? `
+    <div class="per-range">
+      <label>Início<input type="date" class="input" value="${st.ini}" onchange="setRange('ini', this.value, '${key}')"></label>
+      <span class="muted">até</span>
+      <label>Fim<input type="date" class="input" value="${st.fim}" onchange="setRange('fim', this.value, '${key}')"></label>
+    </div>
+    <div class="per-right"><button class="btn btn-ghost btn-sm" onclick="S.${key}.ini='${resetIni}';S.${key}.fim='${resetFim}';render()">${ico('rotate-ccw')}${resetLabel}</button></div>` : `
+    <div class="per-nav">
+      <button class="btn btn-outline btn-icon" title="Período anterior" onclick="moverPeriodo(-1,'${key}')">${ico('chevron-left')}</button>
+      ${perPicker(key, st, per)}
+      <button class="btn btn-outline btn-icon" title="Próximo período" onclick="moverPeriodo(1,'${key}')">${ico('chevron-right')}</button>
+    </div>
+    `}
+  </div>`;
+}
+const sobrepoe = (t, per) => t.realIni <= per.fim && t.realFim >= per.ini;   /* turma em realização no período */
+
+const nomesForms = t => { const fs = formsDaTurma(t); return fs.length ? fs.map(f => f.titulo).join(' · ') : '—'; };
+const hrs = (a,b) => { const [h1,m1]=a.split(':').map(Number), [h2,m2]=b.split(':').map(Number); return ((h2*60+m2)-(h1*60+m1))/60; };
+const fh = n => (Math.round(n*10)/10).toString().replace('.',',') + 'h';
+const encDaTurma = id => DB.encontros.filter(e => e.turmaId === id).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+const ico = (name, extra='') => `<i data-lucide="${name}" ${extra}></i>`;
+
+function situacaoTurma(t){
+  if (!t.inscIni || TODAY < t.inscIni) return 'Planejada';
+  if (TODAY <= t.inscFim) return 'Inscrições abertas';
+  if (TODAY < t.realIni) return 'Inscrições encerradas';
+  if (TODAY <= t.realFim) return 'Em andamento';
+  return 'Concluída';
+}
+function badgeTurma(t){
+  const s = situacaoTurma(t);
+  const c = {'Planejada':'neutral','Inscrições abertas':'info','Inscrições encerradas':'warning','Em andamento':'success','Concluída':'outline'}[s];
+  return `<span class="badge ${c}"><span class="dot"></span>${s}</span>`;
+}
+function badgeForm(s){ return `<span class="badge ${{Ativa:'success',Pausada:'warning',Desativada:'neutral'}[s]}"><span class="dot"></span>${s}</span>`; }
+
+/* ---------- Construtores de componentes (shadcn) ---------- */
+function alertBox(type, title, text){
+  const i = {info:'info', warn:'triangle-alert', danger:'circle-alert'}[type];
+  return `<div class="alert ${type}${title?'':' no-title'}">${ico(i)}${title?`<div class="alert-title">${title}</div>`:''}<div class="alert-desc">${text}</div></div>`;
+}
+function statCard(label, value, icon, tone, badge){
+  return `<div class="ui-card stat"><div class="stat-h"><span>${label}</span><span class="stat-ico tone-${tone}">${ico(icon)}</span></div>
+    <div class="stat-v">${value}</div>${badge||''}</div>`;
+}
+function cardHead(icon, title, desc, right){
+  return `<div class="ui-card-h"><div class="ic">${ico(icon)}</div><div><div class="ui-card-title">${title}</div>${desc?`<div class="ui-card-desc">${desc}</div>`:''}</div>${right?`<div class="right">${right}</div>`:''}</div>`;
+}
+function emptyRow(cols, icon, title, desc){
+  return `<tr><td colspan="${cols}" style="padding:0"><div class="empty"><div class="ic">${ico(icon)}</div><b>${title}</b><span>${desc}</span></div></td></tr>`;
+}
+function tableCard({id, toolbar, head, rows, cols, empty, label}){
+  const n = rows.length;
+  return `<div class="ui-card table-card">
+    ${toolbar ? `<div class="tc-toolbar">${toolbar}</div>` : ''}
+    <div class="table-wrap"><table class="table" id="${id}"><thead><tr>${head}</tr></thead>
+      <tbody>${n ? rows.join('') : emptyRow(cols, ...empty)}</tbody></table></div>
+    <div class="tc-footer"><span>Mostrando <span data-count-for="${id}">${n}</span> de ${n} ${label}</span>
+      <div class="pagination"><button class="btn btn-ghost btn-sm" disabled>${ico('chevron-left')}Anterior</button><button class="page active">1</button><button class="btn btn-ghost btn-sm" disabled>Próxima${ico('chevron-right')}</button></div></div>
+  </div>`;
+}
+function searchBox(placeholder, tableId){
+  return `<div class="search">${ico('search')}<input class="input" placeholder="${placeholder}" oninput="filterRows(this,'${tableId}')"></div>`;
+}
+function filterRows(input, tableId){
+  const q = input.value.trim().toLowerCase(); let n = 0;
+  document.querySelectorAll('#'+tableId+' tbody tr[data-text]').forEach(tr => { const ok = tr.dataset.text.includes(q); tr.style.display = ok ? '' : 'none'; if (ok) n++; });
+  const c = document.querySelector(`[data-count-for="${tableId}"]`); if (c) c.textContent = n;
+}
+function opts(list, sel, emptyLabel){
+  return (emptyLabel!==undefined ? `<option value="">${emptyLabel}</option>` : '') +
+    list.map(o => { const [v,l] = Array.isArray(o) ? o : [o,o]; return `<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(l)}</option>`; }).join('');
+}
+function toast(msg, type){
+  const el = document.createElement('div');
+  el.className = 'toast' + (type==='err' ? ' err' : '');
+  el.innerHTML = `${ico(type==='err' ? 'circle-alert' : 'circle-check')}<span>${esc(msg)}</span>`;
+  $('toast').appendChild(el); icons();
+  setTimeout(() => el.remove(), 3800);
+}
+
+/* =========================================================
+   NAVEGAÇÃO
+   ========================================================= */
+function go(id, params){
+  if (S.screen) S.visited.add(SECTION[S.screen]);
+  S.screen = id;
+  S.params = params || {};
+  S.rp = null;
+  if (id === 'turma-form') initTurmaForm(S.params);
+  if (id === 'turma-detalhe') { S.inscQ = ''; S.inscPage = 1; S.per.ini = S.per.fim = null; }
+  closeModal();
+  render();
+  window.scrollTo(0,0);
+}
+
+function render(){
+  const v = VIEWS[S.screen]();
+  $('app').innerHTML = `
+  <div class="screen">
+    <div class="shell">
+      ${sidebar()}
+      <div class="main">
+        <div class="topnav">
+          <div class="brand"><span class="dot"></span>SIGEFCON</div>
+          <span class="help">Ajuda</span>
+        </div>
+        ${breadcrumb(v.crumbs)}
+        <div class="content">${v.html}</div>
+        <div class="footer">
+          <div class="grad"></div>
+          <div class="in"><span class="brandline">SIGEFCON · Gestão da Formação Continuada</span><span>Manaus · Amazonas</span></div>
+          <div class="bottom">SEDUC-AM · Protótipo de baixa fidelidade — dados fictícios, sem valor de produção</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  icons();
+  if (v.after) v.after();
+}
+
+function sidebar(){
+  const sec = SECTION[S.screen];
+  const items = MENU.map(m => {
+    const cls = ['lvl'+m.lvl];
+    if (m.id === sec) cls.push('current'); else if (S.visited.has(m.id)) cls.push('done');
+    return `<button class="${cls.join(' ')}" onclick="go('${m.id}')">${ico(m.lvl===2?'corner-down-right':m.icon)}${m.label}</button>`;
+  }).join('');
+  return `
+  <div class="sidebar">
+    <div class="avatar">A</div>
+    <div class="sidebar-steps">
+      <div class="sidebar-steps-label">Menu</div>
+      <button class="group ${S.menuOpen?'':'closed'}" onclick="S.menuOpen=!S.menuOpen;render()">${ico('graduation-cap')}Oferta formativa${ico('chevron-down','class="chev"')}</button>
+      ${S.menuOpen ? items : ''}
+      <div class="menu-hint">Formações existem sozinhas no catálogo; cada turma oferta uma formação.</div>
+    </div>
+  </div>`;
+}
+
+function breadcrumb(crumbs){
+  const parts = crumbs.map((c,i) => {
+    const [label, target] = Array.isArray(c) ? c : [c];
+    if (i === crumbs.length-1) return `<b>${esc(label)}</b>`;
+    return target ? `<a onclick="${target}">${esc(label)}</a>` : esc(label);
+  });
+  return `<div class="breadcrumb">${ico('house')}<a onclick="go('painel')">Início</a> › ${parts.join(' › ')}</div>`;
+}
+
+/* =========================================================
+   TELAS
+   ========================================================= */
+const VIEWS = {};
+
+/* ---------- 0. PAINÉIS ---------- */
+/* Métricas de um conjunto de turmas (usadas no painel geral e no painel da formação) */
+function addDays(n){ const d = new Date(TODAY+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function metricas(turmas){
+  const ids = new Set(turmas.map(t => t.id));
+  const naoConcl = turmas.filter(t => situacaoTurma(t)!=='Concluída');
+  const vagas = naoConcl.reduce((a,t) => a + t.vagas, 0), inscritos = naoConcl.reduce((a,t) => a + t.inscritos, 0);
+  const encs = DB.encontros.filter(e => ids.has(e.turmaId));
+  const em7 = addDays(7);
+  return {
+    andamento: turmas.filter(t => situacaoTurma(t)==='Em andamento').length,
+    abertas: turmas.filter(t => situacaoTurma(t)==='Inscrições abertas').length,
+    concluidas: turmas.filter(t => situacaoTurma(t)==='Concluída').length,
+    vagas, inscritos, ocup: vagas ? Math.round(inscritos/vagas*100) : null,
+    encontros: encs.length,
+    realizados: encs.filter(e => e.data < TODAY).length,
+    prox7: encs.filter(e => e.data >= TODAY && e.data <= em7),
+  };
+}
+const pct = m => m.ocup===null ? '—' : m.ocup+'%';
+
+VIEWS['painel'] = () => {
+  const SITS = ['Planejada','Inscrições abertas','Inscrições encerradas','Em andamento','Concluída'];
+  const ano = TODAY.slice(0,4);
+  const bar = perBar('perP', `${ano}-01-01`, `${ano}-12-31`, 'Ano atual');
+  const per = periodo(S.perP);
+  const ativas = DB.formacoes.filter(f => f.situacao==='Ativa');
+  const naoConcl = DB.turmas.filter(t => situacaoTurma(t)!=='Concluída');            /* estado atual (pontos de atenção) */
+  const turmasP = DB.turmas.filter(t => sobrepoe(t, per));                            /* turmas em realização no período */
+  const vagas = turmasP.reduce((a,t) => a + t.vagas, 0), inscritos = turmasP.reduce((a,t) => a + t.inscritos, 0);
+  const ocup = vagas ? Math.round(inscritos/vagas*100) : null;
+  const encP = DB.encontros.filter(e => e.data >= per.ini && e.data <= per.fim).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const realizP = encP.filter(encRealizado);
+  const formsP = new Set(turmasP.map(t => t.formacaoId));
+  const addDays = n => { const d = new Date(TODAY+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
+  const em7 = addDays(7);
+  const proximos = DB.encontros.filter(e => e.data>=TODAY).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const prox7 = proximos.filter(e => e.data<=em7);
+
+  // Turmas por situação (série única)
+  const sitData = SITS.map(k => [k, turmasP.filter(t => situacaoTurma(t)===k).length]);
+  const maxSit = Math.max(1, ...sitData.map(d => d[1]));
+  const barsSit = sitData.map(([k,n]) => `<div class="bar-row" title="${k}: ${n} turma(s)"><span class="lbl">${k}</span><div class="bar-track"><div class="bar-fill" style="width:${n/maxSit*100}%"></div></div><span class="val">${n}</span></div>`).join('');
+
+  // Ocupação de vagas por turma (não concluídas)
+  const barsOcup = turmasP.map(t => { const pc = Math.round(t.inscritos/t.vagas*100);
+    return `<div class="bar-row click" title="${esc(t.nome)}: ${t.inscritos} de ${t.vagas} vagas (${pc}%)" onclick="go('turma-detalhe',{id:'${t.id}'})"><span class="lbl">${esc(t.nome)}</span><div class="bar-track"><div class="bar-fill" style="width:${pc}%"></div></div><span class="val">${pc}%</span></div>`; }).join('');
+
+  // Próximos encontros
+  const MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const futP = encP.filter(e => e.data >= TODAY);
+  const listaBase = futP.length ? futP.slice(0,5) : encP.slice(-5).reverse();
+  const listaEnc = listaBase.map(e => { const t = tById(e.turmaId), l = lById(t.localId); const [,m,d] = e.data.split('-');
+    return `<div class="list-row"><div class="date"><b>${d}</b><span>${MES[+m-1]}</span></div>
+      <div class="m"><div class="t">${esc(t.nome)} ${e.data===TODAY?'<span class="badge info">Hoje</span>':e.data<TODAY?'<span class="badge neutral">Realizado</span>':''}</div><div class="d">${e.ini} – ${e.fim} · ${esc(l?l.nome:'—')}</div></div>
+      <button class="btn btn-ghost btn-icon" title="Abrir encontros da turma" onclick="go('turma-detalhe',{id:'${t.id}',tab:'encontros'})">${ico('chevron-right')}</button></div>`; }).join('');
+
+  // Pontos de atenção
+  const att = [];
+  DB.turmas.filter(t => situacaoTurma(t)==='Inscrições abertas' && t.inscFim<=em7).forEach(t => att.push(['warning','clock','Inscrições encerram em breve', `${esc(t.nome)} · até ${fmt(t.inscFim)} · ${t.inscritos}/${t.vagas} vagas`, `go('turma-detalhe',{id:'${t.id}'})`]));
+  naoConcl.filter(t => !encDaTurma(t.id).length).forEach(t => att.push(['warning','calendar-x','Turma sem encontros', `${esc(t.nome)} · realização a partir de ${fmt(t.realIni)}`, `go('turma-detalhe',{id:'${t.id}',tab:'encontros'})`]));
+  naoConcl.filter(t => t.formacaoId).forEach(t => { const meta = formsDaTurma(t).reduce((a,f)=>a+f.carga,0), tot = encDaTurma(t.id).reduce((a,e)=>a+hrs(e.ini,e.fim),0);
+    if (encDaTurma(t.id).length && tot < meta) att.push(['info','gauge','Carga planejada abaixo da formação', `${esc(t.nome)} · ${fh(tot)} de ${meta}h`, `go('turma-detalhe',{id:'${t.id}',tab:'encontros'})`]); });
+  ativas.filter(f => !turmasDaFormacao(f.id).length).forEach(f => att.push(['neutral','book-open','Formação ativa sem turma', `${esc(f.titulo)} · ${f.carga}h`, `go('formacao-form',{id:'${f.id}'})`]));
+  const tone = {danger:'tone-red', warning:'tone-amber', info:'tone-blue', neutral:'tone-gray'};
+  const listaAtt = att.slice(0,6).map(([k,i,tt,d,act]) => `<div class="list-row"><span class="ico-s ${tone[k]}">${ico(i)}</span><div class="m"><div class="t">${tt}</div><div class="d">${d}</div></div><button class="btn btn-ghost btn-icon" title="Abrir" onclick="${act}">${ico('chevron-right')}</button></div>`).join('');
+
+  // Formações por oferta
+  const rows = DB.formacoes.filter(f => f.situacao!=='Desativada').map(f => { const ts = turmasP.filter(t => t.formacaoId === f.id); const v = ts.reduce((a,t)=>a+t.vagas,0), i = ts.reduce((a,t)=>a+t.inscritos,0); /* turmas em realização no período */
+    return {f, ts, v, i}; }).sort((a,b) => b.ts.length - a.ts.length || b.i - a.i).map(({f,ts,v,i}) => `<tr>
+      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('formacao-painel',{id:'${f.id}'})">${esc(f.titulo)}</button><div class="cell-sub">${f.codigo}</div></td><td>${badgeForm(f.situacao)}</td>
+      <td class="num">${ts.length}</td><td class="num">${DB.encontros.filter(e => ts.some(t => t.id===e.turmaId) && e.data>=per.ini && e.data<=per.fim).length}</td><td class="num">${v}</td><td class="num">${i}</td><td class="num">${v ? Math.round(i/v*100)+'%' : '—'}</td>
+      <td class="acts"><button class="btn btn-ghost btn-icon" title="Painel da formação" onclick="go('formacao-painel',{id:'${f.id}'})">${ico('chevron-right')}</button></td></tr>`);
+
+  return { crumbs:['Oferta formativa','Painel'], html:`
+  <div class="card">
+    <div class="title-band">Painel da oferta formativa <span class="tag">Atualizado em ${fmt(TODAY)}</span></div>
+    <div class="body"><div class="stack">
+      ${bar}
+      <div class="stats">
+        ${statCard('Formações ativas', ativas.length, 'book-open-check', 'blue', `<span class="badge info">${ico('layers')}${formsP.size} ofertada(s) no período</span>`)}
+        ${statCard('Turmas no período', turmasP.length, 'users-round', 'green', `<span class="badge success">${ico('activity')}${DB.turmas.filter(t => situacaoTurma(t)==='Em andamento').length} em andamento hoje</span>`)}
+        ${statCard('Ocupação de vagas', ocup===null ? '—' : `${ocup}%`, 'user-check', 'gray', `<span class="badge neutral">${ico('users')}${inscritos} de ${vagas} vagas das turmas do período</span>`)}
+        ${statCard('Encontros no período', encP.length, 'calendar-days', 'amber', `<span class="badge warning">${ico('clock')}${realizP.length} realizado(s) · ${encP.length - realizP.length} previsto(s)</span>`)}
+      </div>
+      <div class="dash-grid">
+        <div class="ui-card">${cardHead('chart-bar','Turmas por situação','Turmas em realização no período · situação de hoje')}<div class="ui-card-c"><div class="bars">${barsSit}</div></div></div>
+        <div class="ui-card">${cardHead('user-check','Ocupação de vagas','Inscritos ÷ vagas das turmas do período')}<div class="ui-card-c"><div class="bars">${barsOcup || '<span class="muted">Nenhuma turma em realização no período.</span>'}</div></div></div>
+        <div class="ui-card">${cardHead('calendar-clock','Encontros do período', futP.length ? 'Os próximos 5 do período' : 'Os últimos 5 do período', `<button class="btn btn-outline btn-sm" onclick="S.filtroTurma='todas';go('encontros')">Ver todos</button>`)}<div class="ui-card-c"><div class="list">${listaEnc || '<span class="muted">Nenhum encontro no período.</span>'}</div></div></div>
+        <div class="ui-card">${cardHead('triangle-alert','Pontos de atenção', att.length ? `${att.length} item(ns) pedem ação · situação atual, não depende do filtro` : 'Nada pendente')}<div class="ui-card-c"><div class="list">${listaAtt || '<span class="muted">Tudo em ordem.</span>'}</div></div></div>
+      </div>
+      ${tableCard({ id:'tb-dash', label:'formações', cols:8,
+        toolbar:`<div><div class="ui-card-title">Oferta por formação</div><div class="ui-card-desc">Turmas em realização no período, somadas por formação · clique para abrir o painel</div></div>`,
+        head:'<th>Formação</th><th>Situação</th><th>Turmas no período</th><th>Encontros</th><th>Vagas</th><th>Docentes</th><th>Ocupação das turmas</th><th class="acts"></th>',
+        rows, empty:['book-open','Nenhuma formação','Cadastre formações no catálogo.'] })}
+      ${alertBox('info','', 'O filtro considera as <b>turmas em realização no período</b> (início e fim da realização se cruzam com o intervalo) e os <b>encontros com data no período</b>. "Formações ativas" e "Pontos de atenção" mostram a situação atual do cadastro.')}
+    </div></div>
+  </div>`};
+};
+
+VIEWS['formacao-painel'] = () => {
+  const f = fById(S.params.id);
+  const ts = turmasDaFormacao(f.id);
+  const m = metricas(ts);
+  const rows = ts.map(t => { const mt = metricas([t]), l = lById(t.localId);
+    return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+(l?l.nome:'')).toLowerCase())}">
+      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}</div></td>
+      <td>${badgeTurma(t)}</td>
+      <td class="num">${fmt(t.realIni)} – ${fmt(t.realFim)}</td>
+      <td>${l ? esc(l.nome) : '—'}</td>
+      <td class="num">${t.inscritos}/${t.vagas}</td>
+      <td class="num">${Math.round(t.inscritos/t.vagas*100)}%</td>
+      <td class="num">${mt.encontros}</td>
+      <td class="acts"><button class="btn btn-ghost btn-icon" title="Abrir turma" onclick="go('turma-detalhe',{id:'${t.id}'})">${ico('eye')}</button></td></tr>`; });
+  return { crumbs:['Oferta formativa',['Formações',"go('formacoes')"], f.titulo], html:`
+  <div class="card">
+    <div class="title-band band-light">
+      <div class="band-left"><span class="band-dot" style="${f.situacao==='Ativa'?'':f.situacao==='Pausada'?'background:var(--yellow)':'background:#B9BEC9'}"></span><b>${esc(f.titulo)}</b><span class="band-sub">${f.codigo} · ${f.carga}h · ${f.modalidade}</span></div>
+      <div class="steps-tab compact"><span class="active">Painel</span><span onclick="go('formacao-form',{id:'${f.id}'})">Dados da formação</span></div>
+    </div>
+    <div class="body"><div class="stack">
+      <div class="stats">
+        ${statCard('Turmas em andamento', m.andamento, 'users-round', 'green', `<span class="badge success">${ico('users-round')}${ts.length} turma(s) no total</span>`)}
+        ${statCard('Turmas concluídas', m.concluidas, 'flag', 'gray', `<span class="badge neutral">${ico('check')}Período encerrado</span>`)}
+        ${statCard('Docentes atendidos', ts.reduce((a,t)=>a+t.inscritos,0), 'user-check', 'blue', `<span class="badge info">${ico('users')}${ts.reduce((a,t)=>a+t.vagas,0)} vagas ofertadas em ${ts.length} turma(s)</span>`)}
+        ${statCard('Encontros', m.encontros, 'calendar-days', 'amber', `<span class="badge warning">${ico('calendar')}${m.prox7.length} na semana · ${m.realizados} realizados</span>`)}
+      </div>
+      ${tableCard({ id:'tb-fp', label:'turmas', cols:8,
+        toolbar:`<div><div class="ui-card-title">Turmas desta formação</div><div class="ui-card-desc">Ofertas concretas desta formação</div></div><div class="right"><button class="btn btn-outline" onclick="modalEscolherBase('${f.id}','lista')">${ico('copy')}Reaproveitar turma</button><button class="btn btn-primary" onclick="novaTurmaDaFormacao('${f.id}')">${ico('plus')}Nova turma</button></div>`,
+        head:'<th>Turma</th><th>Situação</th><th>Realização</th><th>Local</th><th>Inscritos</th><th>Ocupação</th><th>Encontros</th><th class="acts"></th>',
+        rows, empty:['users-round','Nenhuma turma ofertada','Crie uma nova turma ou reaproveite a estrutura de uma existente.'] })}
+      ${alertBox('info','', 'A formação não tem vagas próprias: as vagas são de cada turma. Por isso o painel mostra o <b>alcance</b> da formação (docentes atendidos e vagas ofertadas em todas as turmas, inclusive concluídas). A ocupação aparece por turma, na tabela acima.')}
+    </div></div>
+  </div>`};
+};
+
+/* ---------- 1. FORMAÇÕES (catálogo) ---------- */
+VIEWS['formacoes'] = () => {
+  const porSit = k => DB.formacoes.filter(f => f.situacao===k);
+  const ativas = porSit('Ativa'), pausadas = porSit('Pausada'), desativ = porSit('Desativada');
+  const cargaAtivas = ativas.reduce((a,f) => a + f.carga, 0);
+  const rows = DB.formacoes.map(f => {
+    const n = turmasDaFormacao(f.id).length;
+    return `<tr data-text="${esc((f.codigo+' '+f.titulo+' '+f.publico+' '+f.area).toLowerCase())}">
+      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('formacao-painel',{id:'${f.id}'})">${esc(f.titulo)}</button><div class="cell-sub">${f.codigo} · ${esc(f.area||'—')}</div></td>
+      <td class="num">${f.carga}h</td>
+      <td>${f.modalidade}</td>
+      <td>${esc(f.publico)}</td>
+      <td>${n ? `<button class="btn-link" onclick="S.filtroFormacao='${f.id}';go('turmas')">${n} turma${n>1?'s':''}</button>` : '<span class="muted">Nenhuma</span>'}</td>
+      <td>${badgeForm(f.situacao)}</td>
+      <td class="acts">
+        <button class="btn btn-ghost btn-icon" title="Painel da formação" onclick="go('formacao-painel',{id:'${f.id}'})">${ico('chart-column')}</button>
+        <button class="btn btn-ghost btn-icon" title="Editar formação" onclick="go('formacao-form',{id:'${f.id}'})">${ico('square-pen')}</button>
+        <button class="btn btn-ghost btn-icon" title="Nova turma desta formação" onclick="novaTurmaDaFormacao('${f.id}')">${ico('plus')}</button>
+      </td></tr>`;
+  });
+  return { crumbs:['Oferta formativa','Formações'], html:`
+  <div class="card">
+    <div class="title-band">Catálogo de formações <span class="tag">RF-FOR-01 · CURSO_FORMACAO</span></div>
+    <div class="body"><div class="stack">
+      ${alertBox('info','Formação é um catálogo reutilizável','Funciona como um curso de faculdade: existe no catálogo mesmo <b>sem turma</b>. Cada turma é uma oferta concreta de <b>uma</b> formação; a mesma formação pode ser ofertada em várias turmas, locais e períodos.')}
+      <div class="stats">
+        ${statCard('Formações ativas', ativas.length, 'circle-check', 'green', `<span class="badge success">${ico('clock')}${cargaAtivas}h de conteúdo disponível</span>`)}
+        ${statCard('Formações pausadas', pausadas.length, 'circle-pause', 'amber', `<span class="badge warning">${ico('circle-pause')}Não recebem novas turmas</span>`)}
+        ${statCard('Formações desativadas', desativ.length, 'circle-off', 'gray', `<span class="badge neutral">${ico('archive')}Fora do catálogo</span>`)}
+      </div>
+      ${tableCard({ id:'tb-form', label:'formações', cols:7,
+        toolbar: `${searchBox('Buscar formações…','tb-form')}<div class="right"><button class="btn btn-primary" onclick="go('formacao-form')">${ico('plus')}Nova formação</button></div>`,
+        head:'<th>Formação</th><th>Carga</th><th>Modalidade</th><th>Público-alvo</th><th>Turmas</th><th>Situação</th><th class="acts">Ações</th>',
+        rows, empty:['book-open','Nenhuma formação cadastrada','Cadastre a primeira formação do catálogo.'] })}
+    </div></div>
+  </div>`};
+};
+
+/* ---------- 2. CADASTRO / EDIÇÃO DE FORMAÇÃO ---------- */
+VIEWS['formacao-form'] = () => {
+  const f = S.params.id ? fById(S.params.id) : null;
+  const v = f || {codigo:'FOR-2026-'+String(DB.seq.formacao).padStart(4,'0'), titulo:'', ementa:'', carga:'', modalidade:'', publico:'', projeto:'', area:'', tematica:'', situacao:'Ativa'};
+  const turmasVinc = f ? turmasDaFormacao(f.id) : [];
+  const nTurmas = turmasVinc.length;
+  return { crumbs:['Oferta formativa',['Formações',"go('formacoes')"], f ? 'Editar formação' : 'Nova formação'], html:`
+  <div class="card">
+    <div class="title-band">${f ? 'Editar formação' : 'Nova formação'} <span class="tag">RF-FOR-02</span></div>
+    <div class="body"><div class="stack">
+      ${alertBox('info','', 'Este cadastro guarda apenas <b>o que é a formação</b> (ementa, carga, público). Os <b>períodos de inscrição e de realização</b> agora são definidos em cada turma.')}
+      ${nTurmas ? alertBox('warn', `Vinculada a ${nTurmas} turma${nTurmas>1?'s':''}`, 'Alterações de ementa e carga horária aparecem nessas turmas. <i>A validar: congelar a versão da ementa em turmas já iniciadas?</i>') : ''}
+      <div class="ui-card">
+        ${cardHead('book-open','Dados da formação','Identificação e conteúdo do curso')}
+        <div class="ui-card-c"><div class="grid g4">
+          <div class="field span3"><label>Título da formação<span class="req">*</span></label><input id="f-titulo" value="${esc(v.titulo)}" placeholder="Ex.: Excel Avançado"></div>
+          <div class="field"><label>Código</label><input value="${v.codigo}" readonly></div>
+          <div class="field span4"><label>Ementa / descrição<span class="req">*</span></label><textarea id="f-ementa" rows="4" maxlength="1000" placeholder="Objetivos, conteúdo programático e demais informações">${esc(v.ementa)}</textarea><span class="hint">Até 1.000 caracteres.</span></div>
+          <div class="field"><label>Carga horária total<span class="req">*</span></label><input id="f-carga" type="number" min="1" value="${v.carga}" placeholder="Ex.: 40"></div>
+          <div class="field"><label>Modalidade<span class="req">*</span></label><select id="f-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div>
+          <div class="field span2"><label>Público-alvo<span class="req">*</span></label><input id="f-publico" value="${esc(v.publico)}" placeholder="Ex.: Professores do 1º ao 3º ano"></div>
+        </div></div>
+      </div>
+      <div class="ui-card">
+        ${cardHead('tags','Área e classificação','Campos já existentes na tela atual')}
+        <div class="ui-card-c"><div class="grid g4">
+          <div class="field"><label>Área / componente</label><input id="f-area" value="${esc(v.area)}" placeholder="Ex.: Língua Portuguesa"></div>
+          <div class="field"><label>Temática</label><input id="f-tematica" value="${esc(v.tematica)}" placeholder="Ex.: Alfabetização"></div>
+          <div class="field"><label>Projeto prioritário</label><select id="f-projeto">${opts(['Alfabetiza Amazonas','Transformação Digital','Educação Integral'], v.projeto, 'Nenhum')}</select></div>
+          <div class="field"><label>Situação</label><select id="f-sit">${opts(['Ativa','Pausada','Desativada'], v.situacao)}</select><span class="hint">Pausada: não recebe novas turmas. Desativada: sai do catálogo.</span></div>
+        </div></div>
+      </div>
+      <div class="divider-label" role="separator"><span>${ico('circle-dashed')}Opcional</span></div>
+      <div class="ui-card">
+        ${cardHead('users-round','Turmas desta formação','Não é necessário para salvar a formação. Use para já criar uma turma ou reaproveitar os dados de uma existente', `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="criarTurmaNaFormacao(true)">${ico('copy')}Reaproveitar turma</button><button class="btn btn-outline btn-sm" onclick="criarTurmaNaFormacao()">${ico('plus')}Criar nova turma</button></div>`)}
+        <div class="ui-card-c"><div id="ft-list"></div></div>
+      </div>
+      <hr class="sep">
+      <div class="form-actions">
+        <button class="btn btn-outline" onclick="go('formacoes')">Cancelar</button>
+        <div class="group">
+          ${f ? `<button class="btn btn-outline" onclick="go('formacao-painel',{id:'${f.id}'})">${ico('chart-column')}Painel da formação</button>` : ''}
+          <button class="btn btn-primary" onclick="salvarFormacao()">${ico('check')}Salvar formação</button>
+        </div>
+      </div>
+    </div></div>
+  </div>`, after: renderFormTurmas};
+};
+
+/* Turmas no cadastro de formação (cada turma criada aqui já nasce com esta formação) */
+function renderFormTurmas(){
+  const el = $('ft-list'); if (!el) return;
+  const ts = S.params.id ? turmasDaFormacao(S.params.id) : [];
+  el.innerHTML = ts.length ? `<div class="stack" style="gap:10px">${ts.map(t => { const l = lById(t.localId); return `<div class="item">
+      <div class="media">${ico('users-round')}</div>
+      <div class="body-i"><div class="t">${esc(t.nome)} ${badgeTurma(t)}</div>
+        <div class="d">${t.codigo} · ${fmt(t.realIni)} – ${fmt(t.realFim)} · ${esc(l?l.nome:'—')} · ${t.vagas} vagas</div></div>
+      <div class="a"><button class="btn btn-ghost btn-icon" title="Editar turma" onclick="openTurmaModal({id:'${t.id}', ctx:'formacao'})">${ico('square-pen')}</button></div></div>`; }).join('')}</div>
+      <p class="hint" style="margin:12px 0 0">Para mudar a formação de uma turma, use "Trocar formação" no detalhe da turma.</p>`
+    : `<div class="item dashed"><div class="media">${ico('users-round')}</div><div class="body-i"><div class="t">Nenhuma turma desta formação</div><div class="d">${S.params.id ? 'Crie uma turma ou reaproveite a estrutura de uma existente.' : 'Ao criar a primeira turma, a formação é salva automaticamente.'}</div></div></div>`;
+  icons();
+}
+/* Formação nova é salva antes, porque a turma precisa nascer com uma formação existente */
+function criarTurmaNaFormacao(reaproveitar){
+  if (!S.params.id){
+    const f = salvarFormacao({stay:true}); if (!f) return;
+    go('formacao-form', {id:f.id});
+    toast(`Formação "${f.titulo}" salva para receber a turma.`);
+  }
+  if (fById(S.params.id).situacao !== 'Ativa') return toast('Somente formações ativas podem receber novas turmas.', 'err');
+  if (reaproveitar) modalEscolherBase(S.params.id, 'formacao');
+  else openTurmaModal({ctx:'formacao', formacaoId:S.params.id});
+}
+function novaTurmaDaFormacao(fid){
+  if (fById(fid).situacao !== 'Ativa') return toast('Somente formações ativas podem receber novas turmas.', 'err');
+  openTurmaModal({formacaoId:fid});
+}
+
+function salvarFormacao(o = {}){
+  const g = id => $(id).value.trim();
+  const d = {titulo:g('f-titulo'), ementa:g('f-ementa'), carga:+g('f-carga'), modalidade:g('f-mod'), publico:g('f-publico'), area:g('f-area'), tematica:g('f-tematica'), projeto:g('f-projeto'), situacao:g('f-sit')};
+  const falta = [];
+  if (!d.titulo) falta.push('título'); if (!d.ementa) falta.push('ementa'); if (!d.carga) falta.push('carga horária');
+  if (!d.modalidade) falta.push('modalidade'); if (!d.publico) falta.push('público-alvo');
+  if (falta.length) return toast('Preencha: ' + falta.join(', ') + '.', 'err');
+  let f = S.params.id ? fById(S.params.id) : null;
+  if (f) Object.assign(f, d);
+  else { f = {id:'F'+DB.seq.formacao, codigo:'FOR-2026-'+String(DB.seq.formacao).padStart(4,'0'), ...d}; DB.seq.formacao++; DB.formacoes.push(f); }
+  if (o.stay) return f;
+  toast(`Formação "${f.titulo}" salva.`);
+  go('formacao-painel', {id:f.id});
+}
+
+/* ---------- 3. TURMAS (lista) ---------- */
+VIEWS['turmas'] = () => {
+  const ff = S.filtroFormacao;
+  const lista = DB.turmas.filter(t => ff==='todas' ? true : t.formacaoId===ff);
+  const sitCount = (...k) => DB.turmas.filter(t => k.includes(situacaoTurma(t))).length;
+  const abertas = sitCount('Inscrições abertas'), aguardando = sitCount('Planejada','Inscrições encerradas');
+  const andamento = sitCount('Em andamento'), concluidas = sitCount('Concluída');
+  const rows = lista.map(t => {
+    const fs = formsDaTurma(t), l = lById(t.localId), n = encDaTurma(t.id).length;
+    return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+fs.map(f=>f.titulo).join(' ')+' '+(l?l.nome:'')).toLowerCase())}">
+      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}</div></td>
+      <td>${fs.length ? `<div>${esc(fs[0].titulo)}</div><div class="cell-sub">${fs[0].carga}h · ${fs[0].modalidade}</div>` : `<span class="badge danger">${ico('unlink')}Sem formação</span>`}</td>
+      <td>${l ? `<div>${esc(l.nome)}</div><div class="cell-sub">${esc(l.municipio)}</div>` : '—'}</td>
+      <td class="num">${fmt(t.realIni)} – ${fmt(t.realFim)}</td>
+      <td class="num">${t.inscritos}/${t.vagas}</td>
+      <td>${n ? `<button class="btn-link" onclick="go('turma-detalhe',{id:'${t.id}',tab:'encontros'})">${n}</button>` : '<span class="muted">0</span>'}</td>
+      <td>${badgeTurma(t)}</td>
+      <td class="acts">
+        <button class="btn btn-ghost btn-icon" title="Cadastrar encontro desta turma" onclick="irParaNovoEncontro('${t.id}')">${ico('calendar-plus')}</button>
+        <button class="btn btn-ghost btn-icon" title="Abrir turma" onclick="go('turma-detalhe',{id:'${t.id}'})">${ico('eye')}</button>
+        <button class="btn btn-ghost btn-icon" title="Reaproveitar em outra formação" onclick="go('turma-form',{copyFrom:'${t.id}'})">${ico('copy')}</button>
+        <button class="btn btn-ghost btn-icon" title="Editar turma" onclick="go('turma-form',{id:'${t.id}'})">${ico('square-pen')}</button>
+      </td></tr>`;
+  });
+  const filtroOpts = [['todas','Todas as formações'], ...DB.formacoes.map(f => [f.id, f.titulo])];
+  return { crumbs:['Oferta formativa','Turmas'], html:`
+  <div class="card">
+    <div class="title-band">Turmas <span class="tag">RF-TUR-01 · TURMA</span></div>
+    <div class="body"><div class="stack">
+      ${alertBox('info','Turma é a oferta concreta de uma formação',`Tem período, local, vagas, formadores e encontros, e nasce sempre com <b>uma formação</b>. Para o mesmo público fazer outro curso, <b>reaproveite a turma</b> (${ico('copy','style="width:12px;height:12px;vertical-align:-1px"')}): a estrutura é copiada para uma nova turma da outra formação.`)}
+      <div class="stats">
+        ${statCard('Inscrições abertas', abertas, 'clipboard-pen', 'blue', `<span class="badge info">${ico('calendar')}Em ${fmt(TODAY)}</span>`)}
+        ${statCard('Aguardando início', aguardando, 'hourglass', 'gray', `<span class="badge neutral">${ico('calendar-clock')}Planejadas ou inscrições encerradas</span>`)}
+        ${statCard('Em andamento', andamento, 'activity', 'green', `<span class="badge success">${ico('play')}Em realização</span>`)}
+        ${statCard('Concluídas', concluidas, 'flag', 'gray', `<span class="badge outline">${ico('check')}Período encerrado</span>`)}
+      </div>
+      ${tableCard({ id:'tb-tur', label:'turmas', cols:8,
+        toolbar: `${searchBox('Buscar turmas…','tb-tur')}<select onchange="S.filtroFormacao=this.value;render()">${opts(filtroOpts, ff)}</select><div class="right"><button class="btn btn-outline btn-icon" style="width:36px;height:36px" title="Novo encontro (uma ou mais turmas)" onclick="S.filtroTurma='todas';modalEncontro()">${ico('calendar-plus')}</button><button class="btn btn-primary" onclick="go('turma-form')">${ico('plus')}Nova turma</button></div>`,
+        head:'<th>Turma</th><th>Formação</th><th>Local</th><th>Realização</th><th>Inscritos</th><th>Encontros</th><th>Situação</th><th class="acts">Ações</th>',
+        rows, empty:['users-round','Nenhuma turma encontrada','Ajuste o filtro ou cadastre uma nova turma.'] })}
+    </div></div>
+  </div>`};
+};
+
+/* ---------- 4. CADASTRO / EDIÇÃO DE TURMA ---------- */
+/* ---------- 4. MODAL DE TURMA (reutilizável) ----------
+   Usado em: lista de turmas (nova/editar), detalhe da turma (editar)
+   e cadastro/painel de formação (turma já nasce com aquela formação).
+   ctx: 'lista' | 'detalhe' | 'formacao' */
+function fsec(icon, title, desc, inner){
+  return `<div class="fsec"><div class="fsec-h"><span class="ic">${ico(icon)}</span><div><b>${title}</b><span>${desc}</span></div></div>${inner}</div>`;
+}
+/* Construtor único do formulário de turma.
+   mode 'page'  → tela (área de Turmas: nova, editar, reaproveitar)
+   mode 'modal' → modal (dentro da formação: criar/reaproveitar sem sair dela) */
+function initTurmaForm(o = {}){
+  const base = o.id ? tById(o.id) : o.copyFrom ? tById(o.copyFrom) : null;
+  S.draft = base ? base.formadores.map(f => ({...f})) : [];
+}
+function buildTurmaForm(o = {}, mode = 'page'){
+  const editing = o.id ? tById(o.id) : null;
+  const ctx = o.ctx || 'lista';
+  const src = o.copyFrom ? tById(o.copyFrom) : null;   /* reaproveitar estrutura de outra turma */
+  const fixa = editing ? null : (o.formacaoId || null); /* formação de origem, travada */
+  S.turmaModal = { id: o.id || null, ctx, mode };
+  const sel = editing ? editing.formacaoId : (fixa || '');
+  const listaF = DB.formacoes.filter(f => (f.situacao==='Ativa' && !(src && !fixa && f.id===src.formacaoId)) || f.id===sel);
+  const blank = {codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), nome:'', publico:'', etapa:'', modEnsino:'', modalidade:'', vagas:'', inscIni:'', inscFim:'', realIni:'', realFim:'', turno:'', hIni:'', hFim:'', localId:''};
+  const v = editing || (src ? {...blank, publico:src.publico, etapa:src.etapa, modEnsino:src.modEnsino, modalidade:src.modalidade, vagas:src.vagas, turno:src.turno, hIni:src.hIni, hFim:src.hFim, localId:src.localId} : blank);
+  const aviso = src
+    ? alertBox('warn', `Reaproveitando ${esc(src.nome)}`, `Público, características, local e formadores foram copiados (formação de origem: ${esc(formDaTurma(src).titulo)}). Informe o nome, ${fixa ? '' : '<b>a nova formação</b>, '}e os <b>novos períodos</b>; inscrições e encontros não são copiados.`)
+    : fixa ? alertBox('info','', 'A turma nasce como oferta <b>desta formação</b>.')
+    : editing ? alertBox('info','', 'Para mudar a formação desta turma, use <b>Trocar formação</b> no detalhe da turma.')
+    : alertBox('info','', 'A turma é a oferta concreta de <b>uma formação</b>, escolhida na criação. Formações existem sem turma; turmas não existem sem formação.');
+  const sec = mode === 'page'
+    ? (icon, title, desc, inner) => `<div class="ui-card">${cardHead(icon, title, desc)}<div class="ui-card-c">${inner}</div></div>`
+    : fsec;
+  const hr = mode === 'page' ? '' : '<hr class="sep">';
+  const body = `${aviso}
+    ${sec('id-card','Identificação','Nome e código da turma', `<div class="grid g4">
+      <div class="field span3"><label>Nome da turma<span class="req">*</span></label><input id="t-nome" value="${esc(v.nome)}" placeholder="Ex.: GETAG – Turma A"></div>
+      <div class="field"><label>Código</label><input value="${v.codigo}" readonly></div></div>`)}
+    ${hr}
+    ${sec('book-open','Formação','Curso que esta turma oferta', `<div class="grid g2" style="align-items:end">
+      <div class="field"><label>Formação<span class="req">*</span></label><select id="t-form" onchange="updFormInfo()" ${fixa || editing ? 'disabled' : ''}>${opts(listaF.map(f => [f.id, `${f.titulo} · ${f.codigo}`]), sel, 'Selecione a formação')}</select></div>
+      <span class="hint" id="form-info" style="padding-bottom:9px"></span></div>`)}
+    ${hr}
+    ${sec('users-round','Público e características','Quem participa e como a turma acontece', `<div class="grid g4">
+      <div class="field span2"><label>Público-alvo<span class="req">*</span></label><input id="t-publico" value="${esc(v.publico)}" placeholder="Ex.: Servidores da GETAG"></div>
+      <div class="field"><label>Etapa</label><select id="t-etapa">${opts(['Não se aplica','Educação Infantil','Ensino Fundamental – Anos Iniciais','Ensino Fundamental – Anos Finais','Ensino Médio'], v.etapa, 'Selecione')}</select></div>
+      <div class="field"><label>Vagas<span class="req">*</span></label><input id="t-vagas" type="number" min="1" value="${v.vagas}" placeholder="Ex.: 35"></div>
+      <div class="field span2"><label>Modalidade de ensino</label><select id="t-modens">${opts(['Regular','EJA','Educação Especial','Educação Indígena'], v.modEnsino, 'Selecione')}</select></div>
+      <div class="field span2"><label>Modalidade<span class="req">*</span></label><select id="t-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div></div>`)}
+    ${hr}
+    ${sec('calendar-range','Períodos','A situação da turma é calculada a partir destas datas', `<div class="grid g4">
+      <div class="field"><label>Inscrição — início<span class="req">*</span></label><input id="t-ii" type="date" value="${v.inscIni}"></div>
+      <div class="field"><label>Inscrição — fim<span class="req">*</span></label><input id="t-if" type="date" value="${v.inscFim}"></div>
+      <div class="field"><label>Realização — início<span class="req">*</span></label><input id="t-ri" type="date" value="${v.realIni}"></div>
+      <div class="field"><label>Realização — fim<span class="req">*</span></label><input id="t-rf" type="date" value="${v.realFim}"></div></div>`)}
+    ${hr}
+    <div class="grid g2" style="gap:${mode==='page'?16:24}px">
+      ${sec('clock','Turno e horário padrão','Sugerido ao criar os encontros', `<div class="grid g3">
+        <div class="field"><label>Turno</label><select id="t-turno">${opts(['Manhã','Tarde','Noite','Integral'], v.turno, 'Selecione')}</select></div>
+        <div class="field"><label>Início</label><input id="t-hi" type="time" value="${v.hIni}"></div>
+        <div class="field"><label>Fim</label><input id="t-hf" type="time" value="${v.hFim}"></div></div>`)}
+      ${sec('map-pin','Local','Todos os encontros acontecem neste local', `<div class="input-group">
+        <div class="field"><label>Local da turma<span class="req">*</span></label><select id="t-local">${opts(DB.locais.map(l => [l.id, `${l.nome} — ${l.municipio}`]), v.localId, 'Selecione')}</select></div>
+        <button class="btn btn-outline" onclick="modalLocal()">${ico('plus')}Novo local</button></div>`)}
+    </div>
+    ${hr}
+    ${sec('user-plus','Formadores','Uma turma pode ter vários formadores, cada um com papel e carga prevista', `<div class="grid g4" style="align-items:end">
+      <div class="field span2"><label>Formador</label><select id="d-form">${opts(DB.formadores.map(f => [f.id, `${f.nome} — ${f.esp}`]), '', 'Selecione')}</select></div>
+      <div class="field"><label>Papel</label><select id="d-papel">${opts(['Titular','Auxiliar','Convidado'], 'Titular')}</select></div>
+      <div class="input-group"><div class="field"><label>Carga (h)</label><input id="d-carga" type="number" min="1" placeholder="20"></div><button class="btn btn-outline btn-icon" style="width:36px;height:36px" title="Adicionar" onclick="addDraft()">${ico('plus')}</button></div></div>
+      <div id="fmd-list"></div>`)}`;
+  const back = o.id ? `go('turma-detalhe',{id:'${o.id}'})` : o.copyFrom ? `go('turma-detalhe',{id:'${o.copyFrom}'})` : `go('turmas')`;
+  const salvar = `${ctx!=='formacao' && !editing ? `<button class="btn btn-outline" onclick="salvarTurma('encontros')">${ico('calendar-plus')}Salvar e definir encontros</button>` : ''}
+    <button class="btn btn-primary" onclick="salvarTurma()">${ico('check')}${editing ? 'Salvar alterações' : ctx==='formacao' ? 'Criar e adicionar à formação' : 'Criar turma'}</button>`;
+  return {
+    title: editing ? `Editar turma · ${editing.nome}` : src ? 'Nova turma (reaproveitada)' : 'Nova turma',
+    desc: editing ? `${editing.codigo} · ${esc(editing.nome)}` : 'Formação, público, períodos, local e formadores da oferta.',
+    body,
+    modalFooter: `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>${salvar}`,
+    pageActions: `<div class="form-actions"><button class="btn btn-outline" onclick="${back}">Cancelar</button><div class="group">${salvar}</div></div>`,
+  };
+}
+
+/* Modal (usado a partir da formação) */
+function openTurmaModal(o = {}){
+  initTurmaForm(o);
+  const f = buildTurmaForm(o, 'modal');
+  openModal(o.id ? 'Editar turma' : 'Nova turma', f.desc, f.body, f.modalFooter, {size:'lg'});
+  renderDraft(); updFormInfo();
+}
+
+/* Tela (área de Turmas) */
+VIEWS['turma-form'] = () => {
+  const f = buildTurmaForm(S.params, 'page');
+  return { crumbs:['Oferta formativa',['Turmas',"go('turmas')"], S.params.id ? 'Editar turma' : 'Nova turma'], html:`
+  <div class="card">
+    <div class="title-band">${esc(f.title)} <span class="tag">RF-TUR-02</span></div>
+    <div class="body"><div class="stack">
+      ${f.body}
+      <hr class="sep">
+      ${f.pageActions}
+    </div></div>
+  </div>`, after: () => { renderDraft(); updFormInfo(); } };
+};
+function updFormInfo(){
+  const el = $('form-info'); if (!el) return;
+  const f = fById($('t-form').value);
+  el.innerHTML = f ? `${f.carga}h · ${f.modalidade} · ${esc(f.publico)}` : 'Somente formações ativas aparecem.';
+}
+
+function renderDraft(){
+  const el = $('fmd-list'); if (!el) return;
+  el.innerHTML = `<div class="mini-list"><table class="table"><thead><tr><th>Formador</th><th>Papel</th><th>Carga prevista</th><th class="acts"></th></tr></thead><tbody>${
+    S.draft.length ? S.draft.map((d,i) => { const p = pById(d.formadorId); return `<tr><td><div class="cell-main">${esc(p.nome)}</div><div class="cell-sub">${esc(p.esp)}</div></td><td><span class="badge ${d.papel==='Titular'?'info':'neutral'}">${d.papel}</span></td><td class="num">${d.carga}h</td><td class="acts"><button class="btn btn-ghost btn-icon danger" title="Remover" onclick="S.draft.splice(${i},1);renderDraft()">${ico('trash-2')}</button></td></tr>`; }).join('')
+    : emptyRow(4,'user-round','Nenhum formador adicionado','Selecione um formador acima e clique em +.')
+  }</tbody></table></div>`;
+  icons();
+}
+function addDraft(){
+  const id = $('d-form').value, papel = $('d-papel').value, carga = +$('d-carga').value;
+  if (!id) return toast('Selecione um formador.', 'err');
+  if (S.draft.some(d => d.formadorId===id)) return toast('Este formador já está na turma.', 'err');
+  S.draft.push({formadorId:id, papel, carga:carga||0});
+  $('d-form').value=''; $('d-carga').value='';
+  renderDraft();
+}
+
+function salvarTurma(next){
+  const g = id => $(id).value.trim();
+  const d = {nome:g('t-nome'), publico:g('t-publico'), etapa:g('t-etapa'), modEnsino:g('t-modens'), modalidade:g('t-mod'), vagas:+g('t-vagas'),
+    inscIni:g('t-ii'), inscFim:g('t-if'), realIni:g('t-ri'), realFim:g('t-rf'), turno:g('t-turno'), hIni:g('t-hi'), hFim:g('t-hf'), localId:g('t-local')};
+  const formacaoId = $('t-form').value;
+  const falta = [];
+  if (!d.nome) falta.push('nome'); if (!formacaoId) falta.push('formação');
+  if (!d.publico) falta.push('público-alvo'); if (!d.modalidade) falta.push('modalidade');
+  if (!d.vagas) falta.push('vagas'); if (!d.inscIni || !d.inscFim) falta.push('período de inscrição');
+  if (!d.realIni || !d.realFim) falta.push('período de realização'); if (!d.localId) falta.push('local');
+  if (falta.length) return toast('Preencha: ' + falta.join(', ') + '.', 'err');
+  if (d.inscIni > d.inscFim || d.realIni > d.realFim) return toast('A data de início não pode ser posterior à data de fim.', 'err');
+  if (d.inscFim > d.realIni) return toast('O período de inscrição deve terminar até o início da realização.', 'err');
+  if (d.hIni && d.hFim && d.hFim <= d.hIni) return toast('O horário final deve ser posterior ao inicial.', 'err');
+  d.formacaoId = formacaoId;
+
+  const { id, ctx } = S.turmaModal;
+  let t = id ? tById(id) : null;
+  if (t){
+    const fora = encDaTurma(t.id).filter(e => e.data < d.realIni || e.data > d.realFim);
+    if (fora.length) return toast(`${fora.length} encontro(s) ficariam fora do novo período de realização. Ajuste-os antes.`, 'err');
+    if (d.vagas < t.inscritos) return toast(`A turma já tem ${t.inscritos} inscritos; as vagas não podem ser menores.`, 'err');
+    Object.assign(t, d, {formadores:S.draft});
+  } else {
+    t = {id:'T'+DB.seq.turma, codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), inscritos:0, ...d, formadores:S.draft};
+    DB.seq.turma++; DB.turmas.push(t);
+  }
+  closeModal();
+  if (S.turmaModal.mode === 'page'){
+    toast(id ? `Turma "${t.nome}" atualizada.` : `Turma "${t.nome}" criada · ${formDaTurma(t).titulo}.`);
+    return go('turma-detalhe', {id:t.id, tab: next==='encontros' ? 'encontros' : 'dados'});
+  }
+  if (ctx === 'formacao'){
+    renderFormTurmas();
+    return toast(id ? `Turma "${t.nome}" atualizada.` : `Turma "${t.nome}" criada para esta formação.`);
+  }
+  if (next === 'encontros') return (toast(`Turma "${t.nome}" criada.`), go('turma-detalhe', {id:t.id, tab:'encontros'}));
+  render();
+  toast(id ? `Turma "${t.nome}" atualizada.` : `Turma "${t.nome}" criada · ${formDaTurma(t).titulo}.`);
+}
+
+/* ---------- 5. DETALHE DA TURMA (abas) ---------- */
+VIEWS['turma-detalhe'] = () => {
+  const t = tById(S.params.id);
+  const tab = S.params.tab || 'acomp';
+  const fs = formsDaTurma(t), l = lById(t.localId);
+  const encs = encDaTurma(t.id);
+  const sit = situacaoTurma(t);
+  const tabs = [['acomp','Acompanhamento'],['dados','Visão geral'],['encontros',`Encontros (${encs.length})`],['formadores',`Formadores (${t.formadores.length})`]]
+    .map(([k,lbl]) => `<span class="${k===tab?'active':''}" onclick="S.params.tab='${k}';render()">${lbl}</span>`).join('');
+  let body = '';
+
+  if (tab==='acomp'){
+    const bar = perBar('per', t.realIni, t.realFim, 'Período da turma');
+    const per = periodo(S.per);
+    const insc = inscritosDaTurma(t);
+    const realizados = encs.filter(e => encRealizado(e) && e.data >= per.ini && e.data <= per.fim);
+    const linhas = insc.map(p => { const pres = realizados.filter(e => presente(p, e)).length;
+      return { ...p, pres, falt: realizados.length - pres, freq: realizados.length ? Math.round(pres / realizados.length * 100) : null }; });
+    const totPres = linhas.reduce((a,l)=>a+l.pres,0), totFalt = linhas.reduce((a,l)=>a+l.falt,0), totReg = totPres + totFalt;
+    const abaixo = linhas.filter(l => l.freq !== null && l.freq < 75).length;
+    const avs = avaliacoesDaTurma(t), aplicadas = avs.filter(a => a.aplicada).length;
+    linhas.forEach(l => { l.media = mediaNotas(l.notas.map((n,k) => avs[k].aplicada ? n : null)); });
+    const avalMedia = mediaNotas(linhas.map(l => l.media));
+    const ultima = aplicadas ? aplicadas - 1 : null, respUlt = ultima===null ? 0 : linhas.filter(l => l.notas[ultima] !== null).length;
+    const ocup = Math.round(t.inscritos / t.vagas * 100);
+    const pctPres = totReg ? Math.round(totPres / totReg * 100) : null;
+    S.acomp = { linhas, avs };
+    body = `
+      ${bar}
+      <div class="stats">
+        <div class="ui-card stat"><div class="stat-h"><span>Ocupação de vagas</span><span class="stat-ico tone-blue">${ico('user-check')}</span></div>
+          <div class="stat-v">${ocup}%</div><div class="progress" style="margin-bottom:10px"><div style="width:${ocup}%"></div></div>
+          <span class="badge info">${ico('users')}${t.inscritos} de ${t.vagas} vagas · ${Math.max(0,t.vagas-t.inscritos)} restantes</span></div>
+        ${statCard('Presenças', pctPres===null ? '—' : pctPres+'%', 'circle-check', 'green', `<span class="badge success">${ico('check')}${totPres} presença(s) em ${realizados.length} encontro(s)</span>`)}
+        ${statCard('Faltas', totFalt, 'circle-x', 'red', `<span class="badge ${abaixo?'danger':'neutral'}">${ico('triangle-alert')}${abaixo} docente(s) abaixo de 75%</span>`)}
+        ${statCard('Avaliação · média', avalMedia===null ? '—' : avalMedia+'%', 'star', 'amber', aplicadas ? `<span class="badge warning">${ico('clipboard-check')}${aplicadas} de ${N_AVAL} aplicadas · ${respUlt}/${linhas.length} na última</span>` : `<span class="badge neutral">${ico('clock')}1ª avaliação em ${fmt(avs[0].data)}</span>`)}
+      </div>
+      ${realizados.length ? '' : alertBox('info','', `Nenhum encontro realizado em <b>${per.label.toLowerCase()}</b>. Presenças e faltas aparecem quando há encontros já ocorridos no período.`)}
+      <div class="ui-card table-card">
+        <div class="tc-toolbar"><div><div class="ui-card-title">Inscritos na turma</div><div class="ui-card-desc">Frequência no período selecionado · avaliações da turma inteira (Av. 1 a 4 e média)</div></div>
+          <div class="right"><div class="search">${ico('search')}<input class="input" placeholder="Buscar inscrito…" value="${esc(S.inscQ||'')}" oninput="S.inscQ=this.value;S.inscPage=1;renderInsc()"></div></div></div>
+        <div id="insc-wrap"></div>
+      </div>
+      ${alertBox('info','', 'Ocupação considera o total de inscritos ÷ vagas (não depende do período). Presenças e faltas contam apenas encontros já realizados no período. Avaliações: <b>4 por turma</b> (provisório), distribuídas no período de realização e <b>não dependem do filtro</b>; a média considera só as avaliações aplicadas e respondidas (NR = não respondeu; — = ainda não aplicada). <i>A validar: frequência mínima de 75%, quantidade e datas das avaliações e se a nota é de satisfação ou de aproveitamento.</i>')}`;
+  }
+
+  if (tab==='dados'){
+    body = `
+      <div class="ui-card">
+        ${cardHead('info','Informações da turma', t.codigo, badgeTurma(t))}
+        <div class="ui-card-c"><dl class="dl">
+          <div><dt>Público-alvo</dt><dd>${esc(t.publico)}</dd></div>
+          <div><dt>Etapa</dt><dd>${esc(t.etapa||'—')}</dd></div>
+          <div><dt>Modalidade</dt><dd>${t.modalidade}${t.modEnsino ? ' · '+t.modEnsino : ''}</dd></div>
+          <div><dt>Inscrição</dt><dd>${fmt(t.inscIni)} – ${fmt(t.inscFim)}</dd></div>
+          <div><dt>Realização</dt><dd>${fmt(t.realIni)} – ${fmt(t.realFim)}</dd></div>
+          <div><dt>Inscritos / vagas</dt><dd>${t.inscritos} / ${t.vagas}</dd></div>
+          <div><dt>Turno / horário</dt><dd>${t.turno||'—'}${t.hIni ? ` · ${t.hIni} às ${t.hFim}` : ''}</dd></div>
+          <div class="span2"><dt>Local</dt><dd>${l ? esc(l.nome)+' — '+esc(l.municipio) : '—'}</dd></div>
+        </dl></div>
+      </div>
+      <div class="ui-card">
+        ${cardHead('book-open','Formação da turma','Curso que esta turma oferta', `<button class="btn btn-outline btn-sm" onclick="modalTrocarFormacao('${t.id}')">${ico('arrow-left-right')}Trocar formação</button>`)}
+        <div class="ui-card-c">${fs.map(f => `<div class="item">
+            <div class="media">${ico('graduation-cap')}</div>
+            <div class="body-i"><div class="t">${esc(f.titulo)} <span class="badge outline">${f.codigo}</span> ${badgeForm(f.situacao)}</div><div class="d">${f.carga}h · ${f.modalidade} · ${esc(f.ementa.slice(0,100))}${f.ementa.length>100?'…':''}</div></div>
+            <div class="a"><button class="btn btn-outline btn-sm" onclick="go('formacao-painel',{id:'${f.id}'})">${ico('chart-column')}Painel da formação</button></div></div>`).join('')}
+        </div>
+      </div>
+      <hr class="sep">
+      <div class="form-actions">
+        <button class="btn btn-outline" onclick="go('turmas')">${ico('arrow-left')}Voltar</button>
+        <div class="group">
+          <button class="btn btn-outline" onclick="go('turma-form',{copyFrom:'${t.id}'})">${ico('copy')}Reaproveitar em outra formação</button>
+          <button class="btn btn-primary" onclick="go('turma-form',{id:'${t.id}'})">${ico('square-pen')}Editar turma</button>
+        </div>
+      </div>`;
+  }
+
+  if (tab==='encontros'){
+    const total = encs.reduce((s,e) => s + hrs(e.ini,e.fim), 0);
+    const meta = fs.length ? fs.reduce((a,f) => a + f.carga, 0) : null;
+    const pct = meta ? Math.min(100, Math.round(total/meta*100)) : 0;
+    const rows = encs.map((e,i) => `<tr class="${e.data<TODAY?'past':''}">
+      <td><div class="cell-main">${e.codigo}</div><div class="cell-sub">Encontro ${i+1}</div></td>
+      <td class="num">${fmt(e.data)} ${e.data===TODAY ? '<span class="badge info">Hoje</span>' : e.data<TODAY ? '<span class="badge neutral">Realizado</span>' : ''}</td>
+      <td class="num">${e.ini} – ${e.fim}</td><td class="num">${fh(hrs(e.ini,e.fim))}</td>
+      <td>${l ? esc(l.nome) : '—'}</td><td>${esc(e.obs)||'<span class="muted">—</span>'}</td>
+      <td class="acts"><button class="btn btn-ghost btn-icon danger" title="Excluir encontro" onclick="removerEncontro('${e.id}')">${ico('trash-2')}</button></td></tr>`);
+    body = `
+      ${alertBox('info','', `O <b>local é sempre o da turma</b> e a data deve estar dentro do período de realização (${fmt(t.realIni)} – ${fmt(t.realFim)}). Os encontros são definidos pelo administrador e também aparecem na tela <button class="btn-link" onclick="S.filtroTurma='${t.id}';go('encontros')">Encontros</button>.`)}
+      <div class="stats">
+        ${statCard('Encontros', encs.length, 'calendar-days', 'blue', `<span class="badge neutral">${ico('clock')}${encs.filter(e=>e.data>=TODAY).length} a realizar</span>`)}
+        <div class="ui-card stat" style="grid-column:span 2">
+          <div class="stat-h"><span>Carga planejada nos encontros</span><span class="stat-ico tone-green">${ico('gauge')}</span></div>
+          <div class="stat-v">${fh(total)} ${meta ? `<small>de ${meta}h ${fs.length>1?`das ${fs.length} formações`:'da formação'} · ${pct}%</small>` : ''}</div>
+          ${meta ? `<div class="progress ${total>meta?'over':''}"><div style="width:${pct}%"></div></div>` : `<span class="badge warning">${ico('unlink')}Vincule uma formação para comparar</span>`}
+        </div>
+      </div>
+      <div class="ui-card">
+        ${cardHead('calendar-plus','Novo encontro','Horário sugerido a partir do turno da turma')}
+        <div class="ui-card-c"><div class="grid g4" style="align-items:end">
+          <div class="field"><label>Data<span class="req">*</span></label><input id="e-data" type="date" min="${t.realIni}" max="${t.realFim}"></div>
+          <div class="field"><label>Início<span class="req">*</span></label><input id="e-ini" type="time" value="${t.hIni}"></div>
+          <div class="field"><label>Fim<span class="req">*</span></label><input id="e-fim" type="time" value="${t.hFim}"></div>
+          <div class="field"><label>Local</label><input value="${l ? esc(l.nome) : '—'}" readonly></div>
+          <div class="field span3"><label>Observação</label><input id="e-obs" placeholder="Ex.: Encontro de abertura"></div>
+          <button class="btn btn-primary" onclick="addEncontroTurma('${t.id}')">${ico('plus')}Adicionar encontro</button>
+        </div></div>
+      </div>
+      ${tableCard({ id:'tb-enc-t', label:'encontros', cols:7,
+        head:'<th>Código</th><th>Data</th><th>Horário</th><th>Carga</th><th>Local</th><th>Observação</th><th class="acts"></th>',
+        rows, empty:['calendar-x','Nenhum encontro cadastrado','Adicione o primeiro encontro desta turma.'] })}`;
+  }
+
+  if (tab==='formadores'){
+    const rows = t.formadores.map((d,i) => { const p = pById(d.formadorId); return `<tr><td><div class="cell-main">${esc(p.nome)}</div><div class="cell-sub">${esc(p.esp)}</div></td><td><span class="badge ${d.papel==='Titular'?'info':'neutral'}">${d.papel}</span></td><td class="num">${d.carga}h</td>
+      <td class="acts"><button class="btn btn-ghost btn-icon danger" title="Remover" onclick="tById('${t.id}').formadores.splice(${i},1);render();toast('Formador removido da turma.')">${ico('trash-2')}</button></td></tr>`; });
+    body = `
+      ${alertBox('info','', 'Na avaliação de satisfação, as respostas poderão avaliar a formação e também <b>cada formador</b> da turma.')}
+      <div class="ui-card">
+        ${cardHead('user-plus','Adicionar formador','Vínculo TURMA_FORMADOR com papel e carga prevista')}
+        <div class="ui-card-c"><div class="grid g4" style="align-items:end">
+          <div class="field span2"><label>Formador</label><select id="x-form">${opts(DB.formadores.filter(p => !t.formadores.some(d => d.formadorId===p.id)).map(p => [p.id, `${p.nome} — ${p.esp}`]), '', 'Selecione')}</select></div>
+          <div class="field"><label>Papel</label><select id="x-papel">${opts(['Titular','Auxiliar','Convidado'],'Titular')}</select></div>
+          <div class="input-group"><div class="field"><label>Carga (h)</label><input id="x-carga" type="number" min="1" placeholder="20"></div>
+            <button class="btn btn-primary" onclick="addFormadorTurma('${t.id}')">${ico('plus')}Adicionar</button></div>
+        </div></div>
+      </div>
+      ${tableCard({ id:'tb-fmd', label:'formadores', cols:4,
+        head:'<th>Formador</th><th>Papel</th><th>Carga prevista</th><th class="acts"></th>',
+        rows, empty:['user-round','Nenhum formador vinculado','Adicione formadores pelo formulário acima.'] })}`;
+  }
+
+  const after = tab==='acomp' ? renderInsc : null;
+  const dotColor = sit==='Em andamento' ? '' : sit==='Inscrições abertas' ? 'background:var(--yellow)' : 'background:#B9BEC9';
+  return { crumbs:['Oferta formativa',['Turmas',"go('turmas')"], t.nome], html:`
+  <div class="card">
+    <div class="title-band band-light">
+      <div class="band-left"><span class="band-dot" style="${dotColor}"></span><b>${esc(t.nome)}</b><span class="band-sub">${t.codigo} · ${esc(nomesForms(t))}</span></div>
+      <div class="steps-tab compact">${tabs}</div>
+    </div>
+    <div class="body"><div class="stack">${body}</div></div>
+  </div>`, after};
+};
+
+function irParaNovoEncontro(turmaId){
+  const t = tById(turmaId);
+  if (situacaoTurma(t) === 'Concluída') return toast(`"${t.nome}" está concluída: não recebe novos encontros.`, 'err');
+  go('turma-detalhe', {id: turmaId, tab: 'encontros'});
+  const el = $('e-data'); if (el){ el.scrollIntoView({block:'center'}); el.focus(); }
+}
+function validarEncontro(t, data, ini, fim){
+  if (!data || !ini || !fim) return 'Informe data, início e fim.';
+  if (fim <= ini) return 'O horário final deve ser posterior ao inicial.';
+  if (data < t.realIni || data > t.realFim) return `Data fora do período de realização da turma ${t.nome} (${fmt(t.realIni)} – ${fmt(t.realFim)}).`;
+  if (encDaTurma(t.id).some(e => e.data===data && ini < e.fim && fim > e.ini)) return `A turma ${t.nome} já tem encontro nesse horário em ${fmt(data)}.`;
+  return null;
+}
+function criarEncontro(turmaId, data, ini, fim, obs){
+  const e = {id:'E'+DB.seq.encontro, codigo:'ENC-2026-'+String(DB.seq.encontro).padStart(4,'0'), turmaId, data, ini, fim, obs:obs||''};
+  DB.seq.encontro++; DB.encontros.push(e); return e;
+}
+function addEncontroTurma(turmaId){
+  const t = tById(turmaId);
+  const data = $('e-data').value, ini = $('e-ini').value, fim = $('e-fim').value, obs = $('e-obs').value.trim();
+  const err = validarEncontro(t, data, ini, fim);
+  if (err) return toast(err, 'err');
+  const e = criarEncontro(turmaId, data, ini, fim, obs);
+  render(); toast(`Encontro ${e.codigo} criado para ${fmt(data)}.`);
+}
+function removerEncontro(id){
+  const e = DB.encontros.find(x => x.id===id);
+  openModal('Excluir encontro?', `O encontro <b>${e.codigo}</b> de ${fmt(e.data)} será removido. Se já houver frequência lançada, a exclusão deverá ser bloqueada.`, '',
+    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-destructive" onclick="confirmarRemocao('${id}')">${ico('trash-2')}Excluir</button>`);
+}
+function confirmarRemocao(id){
+  const e = DB.encontros.find(x => x.id===id);
+  DB.encontros = DB.encontros.filter(x => x.id!==id);
+  closeModal(); render(); toast(`Encontro ${e.codigo} excluído.`);
+}
+function addFormadorTurma(turmaId){
+  const id = $('x-form').value;
+  if (!id) return toast('Selecione um formador.', 'err');
+  tById(turmaId).formadores.push({formadorId:id, papel:$('x-papel').value, carga:+$('x-carga').value||0});
+  render(); toast('Formador vinculado à turma.');
+}
+
+/* ---------- 6. ENCONTROS (visão geral) ---------- */
+VIEWS['encontros'] = () => {
+  const ft = S.filtroTurma;
+  const lista = DB.encontros.filter(e => ft==='todas' || e.turmaId===ft).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const proximos = DB.encontros.filter(e => e.data>=TODAY).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const rows = lista.map(e => {
+    const t = tById(e.turmaId), l = lById(t.localId);
+    return `<tr data-text="${esc((e.codigo+' '+t.nome+' '+nomesForms(t)+' '+(l?l.nome:'')).toLowerCase())}" class="${e.data<TODAY?'past':''}">
+      <td><div class="cell-main">${e.codigo}</div>${e.obs?`<div class="cell-sub">${esc(e.obs)}</div>`:''}</td>
+      <td class="num">${fmt(e.data)} ${e.data===TODAY ? '<span class="badge info">Hoje</span>' : e.data<TODAY ? '<span class="badge neutral">Realizado</span>' : ''}</td>
+      <td class="num">${e.ini} – ${e.fim}</td><td class="num">${fh(hrs(e.ini,e.fim))}</td>
+      <td><button class="btn-link" onclick="go('turma-detalhe',{id:'${t.id}',tab:'encontros'})">${esc(t.nome)}</button><div class="cell-sub">${esc(nomesForms(t))}</div></td>
+      <td>${l ? esc(l.nome) : '—'}</td>
+      <td class="acts"><button class="btn btn-ghost btn-icon danger" title="Excluir" onclick="removerEncontro('${e.id}')">${ico('trash-2')}</button></td></tr>`;
+  });
+  const turmaOpts = [['todas','Todas as turmas'], ...DB.turmas.map(t => [t.id, t.nome])];
+  const prox = proximos[0];
+  return { crumbs:['Oferta formativa',['Turmas',"go('turmas')"],'Encontros'], html:`
+  <div class="card">
+    <div class="title-band">Encontros <span class="tag">RF-ENC-01 · ENCONTRO_TURMA</span></div>
+    <div class="body"><div class="stack">
+      ${alertBox('info','Todo encontro pertence a uma turma','Mas tem tela própria para consulta e cadastro em lote: o mesmo encontro pode ser criado para <b>várias turmas de uma vez</b> (um registro por turma). A frequência será lançada por encontro.')}
+      <div class="stats">
+        ${statCard('Encontros', DB.encontros.length, 'calendar-days', 'blue', `<span class="badge info">${ico('clock')}${fh(DB.encontros.reduce((a,e)=>a+hrs(e.ini,e.fim),0))} planejadas</span>`)}
+        ${statCard('Realizados', DB.encontros.filter(e => e.data<TODAY).length, 'calendar-check', 'gray', `<span class="badge neutral">${ico('history')}Antes de hoje</span>`)}
+        ${statCard('A realizar', proximos.length, 'calendar-clock', 'green', `<span class="badge success">${ico('calendar')}A partir de ${fmt(TODAY)}</span>`)}
+        ${statCard('Próximo encontro', prox ? fmt(prox.data) : '—', 'alarm-clock', 'amber', prox ? `<span class="badge warning">${ico('clock')}${prox.ini} · ${esc(tById(prox.turmaId).nome)}</span>` : '')}
+      </div>
+      ${tableCard({ id:'tb-enc', label:'encontros', cols:7,
+        toolbar: `${searchBox('Buscar encontros…','tb-enc')}<select onchange="S.filtroTurma=this.value;render()">${opts(turmaOpts, ft)}</select><div class="right"><button class="btn btn-primary" onclick="modalEncontro()">${ico('plus')}Novo encontro</button></div>`,
+        head:'<th>Código</th><th>Data</th><th>Horário</th><th>Carga</th><th>Turma</th><th>Local (da turma)</th><th class="acts"></th>',
+        rows, empty:['calendar-x','Nenhum encontro encontrado','Ajuste o filtro ou crie um novo encontro.'] })}
+    </div></div>
+  </div>`};
+};
+
+/* =========================================================
+   MODAIS (Dialog)
+   ========================================================= */
+function openModal(title, desc, body, footer, o = {}){
+  const layer = o.layer || 1, root = layer === 2 ? 'modal-root2' : 'modal-root';
+  const outside = o.size === 'lg' ? '' : `onclick="if(event.target===this)closeModal(${layer})"`;
+  $(root).innerHTML = `<div class="overlay ${layer===2?'l2':''}" ${outside}><div class="dialog ${o.size||''}" role="dialog">
+    <button class="btn btn-ghost btn-icon dialog-x" onclick="closeModal(${layer})" title="Fechar">${ico('x')}</button>
+    <div class="dialog-h"><h3>${title}</h3>${desc?`<p>${desc}</p>`:''}</div>
+    ${body ? `<div class="dialog-b">${body}</div>` : ''}
+    <div class="dialog-f">${footer}</div></div></div>`;
+  icons();
+}
+function closeModal(layer){ if (layer !== 2) $('modal-root').innerHTML = ''; $('modal-root2').innerHTML = ''; }
+
+/* Trocar a formação de uma turma (1 turma = 1 formação) */
+function modalTrocarFormacao(turmaId){
+  const t = tById(turmaId);
+  const lista = DB.formacoes.filter(f => f.situacao==='Ativa' && f.id!==t.formacaoId);
+  const realizados = encDaTurma(t.id).some(e => e.data < TODAY);
+  openModal('Trocar formação',
+    `A turma <b>${esc(t.nome)}</b> passa a ofertar outra formação. Atual: <b>${esc(formDaTurma(t).titulo)}</b>.`, `
+    ${t.inscritos || realizados ? alertBox('warn','Turma já em uso', `${t.inscritos} inscrito(s)${realizados ? ' e encontros realizados' : ''}. Trocar a formação afeta ementa, frequência e certificação <i>(a validar: bloquear após abertura das inscrições?)</i>. Para o mesmo público fazer outro curso, prefira <b>reaproveitar a turma</b>.`) : ''}
+    <div class="field"><label>Nova formação<span class="req">*</span></label><select id="m-tf">${opts(lista.map(f => [f.id, `${f.titulo} · ${f.carga}h`]), '', 'Selecione')}</select></div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarTroca('${turmaId}')">${ico('check')}Trocar formação</button>`);
+}
+function confirmarTroca(turmaId){
+  const fid = $('m-tf').value;
+  if (!fid) return toast('Selecione a nova formação.', 'err');
+  const t = tById(turmaId); t.formacaoId = fid;
+  closeModal(); render(); toast(`"${t.nome}" agora oferta "${fById(fid).titulo}".`);
+}
+
+/* Reaproveitar: escolher a turma cuja estrutura será copiada para uma nova turma desta formação */
+function modalEscolherBase(formacaoId, ctx){
+  const f = fById(formacaoId);
+  if (f.situacao !== 'Ativa') return toast('Somente formações ativas podem receber novas turmas.', 'err');
+  openModal('Reaproveitar turma', `Escolha a turma cuja estrutura (público, local e formadores) será copiada para uma <b>nova turma de ${esc(f.titulo)}</b>.`, `
+    <div class="field"><label>Turma de origem<span class="req">*</span></label>
+      <div class="check-list">${DB.turmas.map(t => `<label><input type="radio" name="m-base" class="rb" value="${t.id}"><div><div class="t">${esc(t.nome)}</div><div class="s">${t.codigo} · ${esc(formDaTurma(t).titulo)} · ${esc(lById(t.localId)?.nome || '—')}</div></div></label>`).join('')}</div></div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="usarBase('${formacaoId}','${ctx}')">Continuar${ico('arrow-right')}</button>`);
+}
+function usarBase(formacaoId, ctx){
+  const r = document.querySelector('input[name=m-base]:checked');
+  if (!r) return toast('Escolha a turma de origem.', 'err');
+  openTurmaModal({copyFrom:r.value, formacaoId, ctx});
+}
+
+function modalLocal(){
+  openModal('Novo local', 'O local é reutilizável: a mesma formação pode acontecer ao mesmo tempo em locais diferentes.', `
+    <div class="field"><label>Nome do local<span class="req">*</span></label><input id="m-lnome" placeholder="Ex.: Escola Estadual Altair Severiano"></div>
+    <div class="grid g2">
+      <div class="field"><label>Município<span class="req">*</span></label><input id="m-lmun" placeholder="Ex.: Manaus"></div>
+      <div class="field"><label>Endereço</label><input id="m-lend" placeholder="Rua, número"></div>
+    </div>`,
+    `<button class="btn btn-outline" onclick="closeModal(2)">Cancelar</button><button class="btn btn-primary" onclick="salvarLocal()">${ico('check')}Salvar local</button>`, {layer:2});
+}
+function salvarLocal(){
+  const nome = $('m-lnome').value.trim(), mun = $('m-lmun').value.trim();
+  if (!nome || !mun) return toast('Informe nome e município.', 'err');
+  const l = {id:'L'+DB.seq.local, nome, municipio:mun, endereco:$('m-lend').value.trim()};
+  DB.seq.local++; DB.locais.push(l);
+  const sel = $('t-local');
+  if (sel){ sel.insertAdjacentHTML('beforeend', `<option value="${l.id}">${esc(l.nome)} — ${esc(l.municipio)}</option>`); sel.value = l.id; }
+  closeModal(2); toast(`Local "${nome}" adicionado.`);
+}
+
+function modalEncontro(){
+  const disp = DB.turmas.filter(t => situacaoTurma(t)!=='Concluída');
+  const pre = S.filtroTurma!=='todas' ? S.filtroTurma : null;
+  openModal('Novo encontro', 'Será criado <b>um encontro para cada turma</b> selecionada, no local da própria turma.', `
+    <div class="field"><label>Turmas<span class="req">*</span></label>
+      <div class="check-list">${disp.map(t => { const l = lById(t.localId); return `<label><input type="checkbox" class="cb m-et" value="${t.id}" ${t.id===pre?'checked':''}><div><div class="t">${esc(t.nome)}</div><div class="s">${esc(l?l.nome:'—')} · ${fmt(t.realIni)} – ${fmt(t.realFim)}</div></div></label>`; }).join('')}</div>
+      <span class="hint">Turmas concluídas não aparecem.</span></div>
+    <div class="grid g3">
+      <div class="field"><label>Data<span class="req">*</span></label><input id="m-edata" type="date"></div>
+      <div class="field"><label>Início<span class="req">*</span></label><input id="m-eini" type="time"></div>
+      <div class="field"><label>Fim<span class="req">*</span></label><input id="m-efim" type="time"></div>
+    </div>
+    <div class="field"><label>Observação</label><input id="m-eobs" placeholder="Opcional"></div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarEncontrosLote()">${ico('calendar-plus')}Criar encontros</button>`);
+}
+function salvarEncontrosLote(){
+  const ids = [...document.querySelectorAll('.m-et:checked')].map(c => c.value);
+  const data = $('m-edata').value, ini = $('m-eini').value, fim = $('m-efim').value, obs = $('m-eobs').value.trim();
+  if (!ids.length) return toast('Selecione ao menos uma turma.', 'err');
+  const erros = ids.map(id => validarEncontro(tById(id), data, ini, fim)).filter(Boolean);
+  if (erros.length) return toast(erros[0] + (erros.length>1 ? ` (+${erros.length-1} outro(s) problema(s))` : ''), 'err');
+  ids.forEach(id => criarEncontro(id, data, ini, fim, obs));
+  closeModal(); render(); toast(`${ids.length} encontro(s) criado(s) para ${fmt(data)}.`);
+}
+
+/* ========================================================= */
+DB = seed(); buildEncontros();
+render();
+</script>
+</body>
+</html>
