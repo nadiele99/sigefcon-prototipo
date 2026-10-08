@@ -921,7 +921,7 @@ VIEWS['painel'] = () => {
 
   return { crumbs:['Oferta formativa','Painel'], html:`
   <div class="card">
-    <div class="title-band">Painel da oferta formativa <span class="tag">Atualizado em ${fmt(TODAY)}</span></div>
+    <div class="title-band">Painel da oferta formativa</div>
     <div class="body"><div class="stack">
       ${bar}
       <div class="stats">
@@ -1002,7 +1002,7 @@ VIEWS['formacoes'] = () => {
   });
   return { crumbs:['Oferta formativa','Formações'], html:`
   <div class="card">
-    <div class="title-band">Catálogo de formações <span class="tag">RF-FOR-01 · CURSO_FORMACAO</span></div>
+    <div class="title-band">Catálogo de formações <span class="tag" title="Uma formação tem 0 ou várias turmas; cada turma tem exatamente uma formação">CURSO_FORMACAO 0 → N TURMA 1 → 1 CURSO_FORMACAO</span></div>
     <div class="body"><div class="stack">
       ${alertBox('info','Formação é um catálogo reutilizável','Funciona como um curso de faculdade: existe no catálogo mesmo <b>sem turma</b>. Cada turma é uma oferta concreta de <b>uma</b> formação; a mesma formação pode ser ofertada em várias turmas, locais e períodos.')}
       <div class="stats">
@@ -1026,7 +1026,7 @@ VIEWS['formacao-form'] = () => {
   const nTurmas = turmasVinc.length;
   return { crumbs:['Oferta formativa',['Formações',"go('formacoes')"], f ? 'Editar formação' : 'Nova formação'], html:`
   <div class="card">
-    <div class="title-band">${f ? 'Editar formação' : 'Nova formação'} <span class="tag">RF-FOR-02</span></div>
+    <div class="title-band">${f ? 'Editar formação' : 'Nova formação'}</div>
     <div class="body"><div class="stack">
       ${alertBox('info','', 'Este cadastro guarda apenas <b>o que é a formação</b> (ementa, carga, público). Os <b>períodos de inscrição e de realização</b> agora são definidos em cada turma.')}
       ${nTurmas ? alertBox('warn', `Vinculada a ${nTurmas} turma${nTurmas>1?'s':''}`, 'Alterações de ementa e carga horária aparecem nessas turmas. <i>A validar: congelar a versão da ementa em turmas já iniciadas?</i>') : ''}
@@ -1104,7 +1104,7 @@ VIEWS['turmas'] = () => {
   const filtroOpts = [['todas','Todas as formações'], ...DB.formacoes.map(f => [f.id, f.titulo])];
   return { crumbs:['Oferta formativa','Turmas'], html:`
   <div class="card">
-    <div class="title-band">Turmas <span class="tag">RF-TUR-01 · TURMA</span></div>
+    <div class="title-band">Turmas</div>
     <div class="body"><div class="stack">
       ${alertBox('info','Turma é a oferta concreta de uma formação',`Tem período, local, vagas, formadores e encontros, e nasce sempre com <b>uma formação</b>. Para o mesmo público fazer outro curso, <b>reaproveite a turma</b> (${ico('copy','style="width:12px;height:12px;vertical-align:-1px"')}): a estrutura é copiada para uma nova turma da outra formação.`)}
       <div class="stats">
@@ -1207,7 +1207,7 @@ VIEWS['turma-form'] = () => {
   const f = buildTurmaForm(S.params, 'page');
   return { crumbs:['Oferta formativa',['Turmas',"go('turmas')"], S.params.id ? 'Editar turma' : 'Nova turma'], html:`
   <div class="card">
-    <div class="title-band">${esc(f.title)} <span class="tag">RF-TUR-02</span></div>
+    <div class="title-band">${esc(f.title)}</div>
     <div class="body"><div class="stack">
       ${f.body}
       <hr class="sep">
@@ -1515,7 +1515,7 @@ VIEWS['encontros'] = () => {
   const prox = proximos[0];
   return { crumbs:['Oferta formativa',['Turmas',"go('turmas')"],'Encontros'], html:`
   <div class="card">
-    <div class="title-band">Encontros <span class="tag">RF-ENC-01 · ENCONTRO_TURMA</span></div>
+    <div class="title-band">Encontros</div>
     <div class="body"><div class="stack">
       ${alertBox('info','Todo encontro pertence a uma turma','Mas tem tela própria para consulta e cadastro em lote: o mesmo encontro pode ser criado para <b>várias turmas de uma vez</b> (um registro por turma). A frequência será lançada por encontro.')}
       <div class="stats">
