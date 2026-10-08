@@ -995,7 +995,7 @@ VIEWS['formacoes'] = () => {
       </div>
       ${tableCard({ id:'tb-form', label:'formações', cols:7,
         toolbar: `${searchBox('Buscar formações…','tb-form')}<div class="right"><button class="btn btn-primary" onclick="go('formacao-form')">${ico('plus')}Nova formação</button></div>`,
-        head:'<th>Formação</th><th>Carga</th><th>Modalidade</th><th>Público-alvo</th><th>Turmas</th><th>Situação</th><th class="acts">Ações</th>',
+        head:'<th>Formação</th><th>Carga</th><th>Tipo de oferta</th><th>Público-alvo</th><th>Turmas</th><th>Situação</th><th class="acts">Ações</th>',
         rows, empty:['book-open','Nenhuma formação cadastrada','Cadastre a primeira formação do catálogo.'] })}
     </div></div>
   </div>`};
@@ -1020,7 +1020,7 @@ VIEWS['formacao-form'] = () => {
           <div class="field"><label>Código</label><input value="${v.codigo}" readonly></div>
           <div class="field span4"><label>Ementa / descrição<span class="req">*</span></label><textarea id="f-ementa" rows="4" maxlength="1000" placeholder="Objetivos, conteúdo programático e demais informações">${esc(v.ementa)}</textarea><span class="hint">Até 1.000 caracteres.</span></div>
           <div class="field"><label>Carga horária total<span class="req">*</span></label><input id="f-carga" type="number" min="1" value="${v.carga}" placeholder="Ex.: 40"></div>
-          <div class="field"><label>Modalidade<span class="req">*</span></label><select id="f-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div>
+          <div class="field"><label>Tipo de oferta<span class="req">*</span></label><select id="f-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div>
           <div class="field span2"><label>Público-alvo<span class="req">*</span></label><input id="f-publico" value="${esc(v.publico)}" placeholder="Ex.: Professores do 1º ao 3º ano"></div>
         </div></div>
       </div>
@@ -1050,7 +1050,7 @@ function salvarFormacao(o = {}){
   const d = {titulo:g('f-titulo'), ementa:g('f-ementa'), carga:+g('f-carga'), modalidade:g('f-mod'), publico:g('f-publico'), area:g('f-area'), tematica:g('f-tematica'), projeto:g('f-projeto'), situacao:g('f-sit')};
   const falta = [];
   if (!d.titulo) falta.push('título'); if (!d.ementa) falta.push('ementa'); if (!d.carga) falta.push('carga horária');
-  if (!d.modalidade) falta.push('modalidade'); if (!d.publico) falta.push('público-alvo');
+  if (!d.modalidade) falta.push('tipo de oferta'); if (!d.publico) falta.push('público-alvo');
   if (falta.length) return toast('Preencha: ' + falta.join(', ') + '.', 'err');
   let f = S.params.id ? fById(S.params.id) : null;
   if (f) Object.assign(f, d);
@@ -1150,7 +1150,7 @@ function buildTurmaForm(o = {}, mode = 'page'){
       <div class="field"><label>Etapa</label><select id="t-etapa">${opts(['Não se aplica','Educação Infantil','Ensino Fundamental – Anos Iniciais','Ensino Fundamental – Anos Finais','Ensino Médio'], v.etapa, 'Selecione')}</select></div>
       <div class="field"><label>Vagas<span class="req">*</span></label><input id="t-vagas" type="number" min="1" value="${v.vagas}" placeholder="Ex.: 35"></div>
       <div class="field span2"><label>Modalidade de ensino</label><select id="t-modens">${opts(['Regular','EJA','Educação Especial','Educação Indígena'], v.modEnsino, 'Selecione')}</select></div>
-      <div class="field span2"><label>Modalidade<span class="req">*</span></label><select id="t-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div></div>`)}
+      <div class="field span2"><label>Tipo de oferta<span class="req">*</span></label><select id="t-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div></div>`)}
     ${hr}
     ${sec('calendar-range','Períodos','A situação da turma é calculada a partir destas datas', `<div class="grid g4">
       <div class="field"><label>Inscrição — início<span class="req">*</span></label><input id="t-ii" type="date" value="${v.inscIni}"></div>
@@ -1228,7 +1228,7 @@ function salvarTurma(next){
   const formacaoId = $('t-form').value;
   const falta = [];
   if (!d.nome) falta.push('nome'); if (!formacaoId) falta.push('formação');
-  if (!d.publico) falta.push('público-alvo'); if (!d.modalidade) falta.push('modalidade');
+  if (!d.publico) falta.push('público-alvo'); if (!d.modalidade) falta.push('tipo de oferta');
   if (!d.vagas) falta.push('vagas'); if (!d.inscIni || !d.inscFim) falta.push('período de inscrição');
   if (!d.realIni || !d.realFim) falta.push('período de realização'); if (!d.localId) falta.push('local');
   if (falta.length) return toast('Preencha: ' + falta.join(', ') + '.', 'err');
@@ -1311,7 +1311,8 @@ VIEWS['turma-detalhe'] = () => {
         <div class="ui-card-c"><dl class="dl">
           <div><dt>Público-alvo</dt><dd>${esc(t.publico)}</dd></div>
           <div><dt>Etapa</dt><dd>${esc(t.etapa||'—')}</dd></div>
-          <div><dt>Modalidade</dt><dd>${t.modalidade}${t.modEnsino ? ' · '+t.modEnsino : ''}</dd></div>
+          <div><dt>Tipo de oferta</dt><dd>${t.modalidade}</dd></div>
+          <div><dt>Modalidade de ensino</dt><dd>${esc(t.modEnsino||'—')}</dd></div>
           <div><dt>Inscrição</dt><dd>${fmt(t.inscIni)} – ${fmt(t.inscFim)}</dd></div>
           <div><dt>Realização</dt><dd>${fmt(t.realIni)} – ${fmt(t.realFim)}</dd></div>
           <div><dt>Inscritos / vagas</dt><dd>${t.inscritos} / ${t.vagas}</dd></div>
