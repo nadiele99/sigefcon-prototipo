@@ -308,10 +308,6 @@ svg.lucide{stroke-width:2;}
 .per-range .muted{padding-bottom:9px;font-size:13px;}
 .seg-btn{display:inline-flex;align-items:center;gap:6px;} .seg-btn svg{width:14px;height:14px;}
 .head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
-.divider-label{display:flex;align-items:center;gap:12px;margin:4px 0 -4px;color:var(--muted-fg);font-size:12px;font-weight:500;}
-.divider-label::before,.divider-label::after{content:"";flex:1;height:1px;background:var(--border);}
-.divider-label span{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;letter-spacing:.02em;}
-.divider-label svg{width:12px;height:12px;}
 .sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:18px;border-top:1px solid var(--border);}
 .sec-title b{font-size:16px;font-weight:600;letter-spacing:-.01em;} .sec-title span{font-size:13.5px;color:var(--muted-fg);}
 .avatar-s{width:30px;height:30px;border-radius:50%;background:#EFF4FB;color:var(--navy-600);display:grid;place-items:center;font-size:11.5px;font-weight:600;flex-shrink:0;}
@@ -960,9 +956,9 @@ VIEWS['formacao-painel'] = () => {
         ${statCard('Encontros', m.encontros, 'calendar-days', 'amber', `<span class="badge warning">${ico('calendar')}${m.prox7.length} na semana · ${m.realizados} realizados</span>`)}
       </div>
       ${tableCard({ id:'tb-fp', label:'turmas', cols:8,
-        toolbar:`<div><div class="ui-card-title">Turmas desta formação</div><div class="ui-card-desc">Ofertas concretas desta formação</div></div><div class="right"><button class="btn btn-outline" onclick="modalEscolherBase('${f.id}','lista')">${ico('copy')}Reaproveitar turma</button><button class="btn btn-primary" onclick="novaTurmaDaFormacao('${f.id}')">${ico('plus')}Nova turma</button></div>`,
+        toolbar:`<div><div class="ui-card-title">Turmas desta formação</div><div class="ui-card-desc">Ofertas concretas desta formação · o vínculo é feito na área de Turmas</div></div><div class="right"><button class="btn btn-outline" onclick="S.filtroFormacao='${f.id}';go('turmas')">${ico('users-round')}Ver em Turmas</button></div>`,
         head:'<th>Turma</th><th>Situação</th><th>Realização</th><th>Local</th><th>Inscritos</th><th>Ocupação</th><th>Encontros</th><th class="acts"></th>',
-        rows, empty:['users-round','Nenhuma turma ofertada','Crie uma nova turma ou reaproveite a estrutura de uma existente.'] })}
+        rows, empty:['users-round','Nenhuma turma ofertada','Para ofertar esta formação, crie uma turma na área de Turmas e escolha esta formação.'] })}
       ${alertBox('info','', 'A formação não tem vagas próprias: as vagas são de cada turma. Por isso o painel mostra o <b>alcance</b> da formação (docentes atendidos e vagas ofertadas em todas as turmas, inclusive concluídas). A ocupação aparece por turma, na tabela acima.')}
     </div></div>
   </div>`};
@@ -985,7 +981,6 @@ VIEWS['formacoes'] = () => {
       <td class="acts">
         <button class="btn btn-ghost btn-icon" title="Painel da formação" onclick="go('formacao-painel',{id:'${f.id}'})">${ico('chart-column')}</button>
         <button class="btn btn-ghost btn-icon" title="Editar formação" onclick="go('formacao-form',{id:'${f.id}'})">${ico('square-pen')}</button>
-        <button class="btn btn-ghost btn-icon" title="Nova turma desta formação" onclick="novaTurmaDaFormacao('${f.id}')">${ico('plus')}</button>
       </td></tr>`;
   });
   return { crumbs:['Oferta formativa','Formações'], html:`
@@ -1038,11 +1033,6 @@ VIEWS['formacao-form'] = () => {
           <div class="field"><label>Situação</label><select id="f-sit">${opts(['Ativa','Pausada','Desativada'], v.situacao)}</select><span class="hint">Pausada: não recebe novas turmas. Desativada: sai do catálogo.</span></div>
         </div></div>
       </div>
-      <div class="divider-label" role="separator"><span>${ico('circle-dashed')}Opcional</span></div>
-      <div class="ui-card">
-        ${cardHead('users-round','Turmas desta formação','Não é necessário para salvar a formação. Use para já criar uma turma ou reaproveitar os dados de uma existente', `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="criarTurmaNaFormacao(true)">${ico('copy')}Reaproveitar turma</button><button class="btn btn-outline btn-sm" onclick="criarTurmaNaFormacao()">${ico('plus')}Criar nova turma</button></div>`)}
-        <div class="ui-card-c"><div id="ft-list"></div></div>
-      </div>
       <hr class="sep">
       <div class="form-actions">
         <button class="btn btn-outline" onclick="go('formacoes')">Cancelar</button>
@@ -1052,37 +1042,8 @@ VIEWS['formacao-form'] = () => {
         </div>
       </div>
     </div></div>
-  </div>`, after: renderFormTurmas};
+  </div>`};
 };
-
-/* Turmas no cadastro de formação (cada turma criada aqui já nasce com esta formação) */
-function renderFormTurmas(){
-  const el = $('ft-list'); if (!el) return;
-  const ts = S.params.id ? turmasDaFormacao(S.params.id) : [];
-  el.innerHTML = ts.length ? `<div class="stack" style="gap:10px">${ts.map(t => { const l = lById(t.localId); return `<div class="item">
-      <div class="media">${ico('users-round')}</div>
-      <div class="body-i"><div class="t">${esc(t.nome)} ${badgeTurma(t)}</div>
-        <div class="d">${t.codigo} · ${fmt(t.realIni)} – ${fmt(t.realFim)} · ${esc(l?l.nome:'—')} · ${t.vagas} vagas</div></div>
-      <div class="a"><button class="btn btn-ghost btn-icon" title="Editar turma" onclick="openTurmaModal({id:'${t.id}', ctx:'formacao'})">${ico('square-pen')}</button></div></div>`; }).join('')}</div>
-      <p class="hint" style="margin:12px 0 0">Para mudar a formação de uma turma, use "Trocar formação" no detalhe da turma.</p>`
-    : `<div class="item dashed"><div class="media">${ico('users-round')}</div><div class="body-i"><div class="t">Nenhuma turma desta formação</div><div class="d">${S.params.id ? 'Crie uma turma ou reaproveite a estrutura de uma existente.' : 'Ao criar a primeira turma, a formação é salva automaticamente.'}</div></div></div>`;
-  icons();
-}
-/* Formação nova é salva antes, porque a turma precisa nascer com uma formação existente */
-function criarTurmaNaFormacao(reaproveitar){
-  if (!S.params.id){
-    const f = salvarFormacao({stay:true}); if (!f) return;
-    go('formacao-form', {id:f.id});
-    toast(`Formação "${f.titulo}" salva para receber a turma.`);
-  }
-  if (fById(S.params.id).situacao !== 'Ativa') return toast('Somente formações ativas podem receber novas turmas.', 'err');
-  if (reaproveitar) modalEscolherBase(S.params.id, 'formacao');
-  else openTurmaModal({ctx:'formacao', formacaoId:S.params.id});
-}
-function novaTurmaDaFormacao(fid){
-  if (fById(fid).situacao !== 'Ativa') return toast('Somente formações ativas podem receber novas turmas.', 'err');
-  openTurmaModal({formacaoId:fid});
-}
 
 function salvarFormacao(o = {}){
   const g = id => $(id).value.trim();
@@ -1143,11 +1104,9 @@ VIEWS['turmas'] = () => {
   </div>`};
 };
 
-/* ---------- 4. CADASTRO / EDIÇÃO DE TURMA ---------- */
-/* ---------- 4. MODAL DE TURMA (reutilizável) ----------
-   Usado em: lista de turmas (nova/editar), detalhe da turma (editar)
-   e cadastro/painel de formação (turma já nasce com aquela formação).
-   ctx: 'lista' | 'detalhe' | 'formacao' */
+/* ---------- 4. FORMULÁRIO DE TURMA ----------
+   Construtor único (buildTurmaForm), exibido como tela na área de Turmas: nova, editar e reaproveitar.
+   O vínculo turma → formação é feito somente aqui. */
 function fsec(icon, title, desc, inner){
   return `<div class="fsec"><div class="fsec-h"><span class="ic">${ico(icon)}</span><div><b>${title}</b><span>${desc}</span></div></div>${inner}</div>`;
 }
@@ -1215,8 +1174,8 @@ function buildTurmaForm(o = {}, mode = 'page'){
       <div class="input-group"><div class="field"><label>Carga (h)</label><input id="d-carga" type="number" min="1" placeholder="20"></div><button class="btn btn-outline btn-icon" style="width:36px;height:36px" title="Adicionar" onclick="addDraft()">${ico('plus')}</button></div></div>
       <div id="fmd-list"></div>`)}`;
   const back = o.id ? `go('turma-detalhe',{id:'${o.id}'})` : o.copyFrom ? `go('turma-detalhe',{id:'${o.copyFrom}'})` : `go('turmas')`;
-  const salvar = `${ctx!=='formacao' && !editing ? `<button class="btn btn-outline" onclick="salvarTurma('encontros')">${ico('calendar-plus')}Salvar e definir encontros</button>` : ''}
-    <button class="btn btn-primary" onclick="salvarTurma()">${ico('check')}${editing ? 'Salvar alterações' : ctx==='formacao' ? 'Criar e adicionar à formação' : 'Criar turma'}</button>`;
+  const salvar = `${!editing ? `<button class="btn btn-outline" onclick="salvarTurma('encontros')">${ico('calendar-plus')}Salvar e definir encontros</button>` : ''}
+    <button class="btn btn-primary" onclick="salvarTurma()">${ico('check')}${editing ? 'Salvar alterações' : 'Criar turma'}</button>`;
   return {
     title: editing ? `Editar turma · ${editing.nome}` : src ? 'Nova turma (reaproveitada)' : 'Nova turma',
     desc: editing ? `${editing.codigo} · ${esc(editing.nome)}` : 'Formação, público, períodos, local e formadores da oferta.',
@@ -1224,14 +1183,6 @@ function buildTurmaForm(o = {}, mode = 'page'){
     modalFooter: `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>${salvar}`,
     pageActions: `<div class="form-actions"><button class="btn btn-outline" onclick="${back}">Cancelar</button><div class="group">${salvar}</div></div>`,
   };
-}
-
-/* Modal (usado a partir da formação) */
-function openTurmaModal(o = {}){
-  initTurmaForm(o);
-  const f = buildTurmaForm(o, 'modal');
-  openModal(o.id ? 'Editar turma' : 'Nova turma', f.desc, f.body, f.modalFooter, {size:'lg'});
-  renderDraft(); updFormInfo();
 }
 
 /* Tela (área de Turmas) */
@@ -1301,10 +1252,6 @@ function salvarTurma(next){
   if (S.turmaModal.mode === 'page'){
     toast(id ? `Turma "${t.nome}" atualizada.` : `Turma "${t.nome}" criada · ${formDaTurma(t).titulo}.`);
     return go('turma-detalhe', {id:t.id, tab: next==='encontros' ? 'encontros' : 'dados'});
-  }
-  if (ctx === 'formacao'){
-    renderFormTurmas();
-    return toast(id ? `Turma "${t.nome}" atualizada.` : `Turma "${t.nome}" criada para esta formação.`);
   }
   if (next === 'encontros') return (toast(`Turma "${t.nome}" criada.`), go('turma-detalhe', {id:t.id, tab:'encontros'}));
   render();
@@ -1566,21 +1513,6 @@ function confirmarTroca(turmaId){
   if (!fid) return toast('Selecione a nova formação.', 'err');
   const t = tById(turmaId); t.formacaoId = fid;
   closeModal(); render(); toast(`"${t.nome}" agora oferta "${fById(fid).titulo}".`);
-}
-
-/* Reaproveitar: escolher a turma cuja estrutura será copiada para uma nova turma desta formação */
-function modalEscolherBase(formacaoId, ctx){
-  const f = fById(formacaoId);
-  if (f.situacao !== 'Ativa') return toast('Somente formações ativas podem receber novas turmas.', 'err');
-  openModal('Reaproveitar turma', `Escolha a turma cuja estrutura (público, local e formadores) será copiada para uma <b>nova turma de ${esc(f.titulo)}</b>.`, `
-    <div class="field"><label>Turma de origem<span class="req">*</span></label>
-      <div class="check-list">${DB.turmas.map(t => `<label><input type="radio" name="m-base" class="rb" value="${t.id}"><div><div class="t">${esc(t.nome)}</div><div class="s">${t.codigo} · ${esc(formDaTurma(t).titulo)} · ${esc(lById(t.localId)?.nome || '—')}</div></div></label>`).join('')}</div></div>`,
-    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="usarBase('${formacaoId}','${ctx}')">Continuar${ico('arrow-right')}</button>`);
-}
-function usarBase(formacaoId, ctx){
-  const r = document.querySelector('input[name=m-base]:checked');
-  if (!r) return toast('Escolha a turma de origem.', 'err');
-  openTurmaModal({copyFrom:r.value, formacaoId, ctx});
 }
 
 function modalLocal(){
