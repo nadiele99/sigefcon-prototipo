@@ -214,6 +214,9 @@ svg.lucide{stroke-width:2;}
 .table tbody tr:last-child td{border-bottom:none;}
 .table tbody tr:hover td{background:var(--subtle);}
 .table tr.past td{color:var(--muted-fg);}
+.table tr.cancelled td{color:var(--muted-fg);}
+.table tr.cancelled td.num:first-of-type,.table tr.cancelled .cell-main{text-decoration:line-through;text-decoration-color:#D4D4D8;}
+.motivo{font-size:13px;color:#B42318;}
 .table .cell-main{font-weight:500;color:var(--fg);}
 .table .cell-sub{font-size:13px;color:var(--muted-fg);margin-top:2px;}
 .table td.acts{white-space:nowrap;text-align:right;width:1%;}
@@ -423,7 +426,12 @@ function buildEncontros(){
   add('T2', ['2026-10-27','2026-11-03'], '08:00','12:00');
   add('T6', ['2026-04-22','2026-04-29','2026-05-06','2026-05-13','2026-05-20','2026-05-27','2026-06-03','2026-06-10'], '14:00','18:00');
   add('T7', ['2026-05-25','2026-06-01','2026-06-08','2026-06-15','2026-06-22','2026-06-29','2026-07-03'], '08:00','12:00');
+  const cancelar = (turmaId, data, motivo) => Object.assign(DB.encontros.find(e => e.turmaId===turmaId && e.data===data), {cancelado:true, motivo});
+  cancelar('T3', '2026-09-30', 'Suspensão das atividades no polo (feriado municipal).');
+  cancelar('T1', '2026-10-20', 'Formador em viagem a serviço; data a remarcar.');
   DB.seq.encontro = DB.encontros.length + 1;
+  DB.turmas.forEach(t => { if (t.carga == null) t.carga = fById(t.formacaoId).carga; });   /* carga da turma (sugerida pela formação) */
+  tById('T3').carga = 40;   /* exemplo: turma com carga menor que a da formação (60h) */
 }
 function resetData(){ DB = seed(); buildEncontros(); S.visited = new Set(); S.filtroFormacao='todas'; S.filtroTurma='todas'; go('painel'); toast('Dados de exemplo restaurados.'); }
 
@@ -508,7 +516,13 @@ function renderInsc(){
         <button class="btn btn-ghost btn-sm" ${pag>=pags?'disabled':''} onclick="S.inscPage=${pag+1};renderInsc()">Próxima${ico('chevron-right')}</button></div></div>`;
   icons();
 }
-const encRealizado = e => e.data <= TODAY;  /* frequência lançada para encontros já ocorridos (inclui o de hoje) */
+const encRealizado = e => !e.cancelado && e.data <= TODAY;   /* frequência: só encontros ocorridos e não cancelados */
+const encAtivo = e => !e.cancelado;
+function sitEnc(e){ return e.cancelado ? 'Cancelado' : e.data < TODAY ? 'Realizado' : e.data === TODAY ? 'Hoje' : 'Previsto'; }
+function badgeEnc(e){
+  const s = sitEnc(e), c = {Cancelado:'danger', Realizado:'neutral', Hoje:'info', Previsto:'outline'}[s];
+  return `<span class="badge ${c}" ${e.cancelado && e.motivo ? `title="${esc(e.motivo)}"` : ''}>${s==='Cancelado' ? ico('ban') : ''}${s}</span>`;
+}
 const presente = (insc, e) => hsh(insc.id + e.id) < insc.taxa;
 /* Intervalo do filtro de período */
 /* ---- Filtro de período reutilizável ----
@@ -694,6 +708,7 @@ const nomesForms = t => { const fs = formsDaTurma(t); return fs.length ? fs.map(
 const hrs = (a,b) => { const [h1,m1]=a.split(':').map(Number), [h2,m2]=b.split(':').map(Number); return ((h2*60+m2)-(h1*60+m1))/60; };
 const fh = n => (Math.round(n*10)/10).toString().replace('.',',') + 'h';
 const encDaTurma = id => DB.encontros.filter(e => e.turmaId === id).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+const encAtivosDaTurma = id => encDaTurma(id).filter(encAtivo);
 const ico = (name, extra='') => `<i data-lucide="${name}" ${extra}></i>`;
 
 function situacaoTurma(t){
@@ -835,7 +850,7 @@ function metricas(turmas){
   const ids = new Set(turmas.map(t => t.id));
   const naoConcl = turmas.filter(t => situacaoTurma(t)!=='Concluída');
   const vagas = naoConcl.reduce((a,t) => a + t.vagas, 0), inscritos = naoConcl.reduce((a,t) => a + t.inscritos, 0);
-  const encs = DB.encontros.filter(e => ids.has(e.turmaId));
+  const encs = DB.encontros.filter(e => ids.has(e.turmaId) && encAtivo(e));
   const em7 = addDays(7);
   return {
     andamento: turmas.filter(t => situacaoTurma(t)==='Em andamento').length,
@@ -859,12 +874,14 @@ VIEWS['painel'] = () => {
   const turmasP = DB.turmas.filter(t => sobrepoe(t, per));                            /* turmas em realização no período */
   const vagas = turmasP.reduce((a,t) => a + t.vagas, 0), inscritos = turmasP.reduce((a,t) => a + t.inscritos, 0);
   const ocup = vagas ? Math.round(inscritos/vagas*100) : null;
-  const encP = DB.encontros.filter(e => e.data >= per.ini && e.data <= per.fim).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const encPTodos = DB.encontros.filter(e => e.data >= per.ini && e.data <= per.fim);
+  const encP = encPTodos.filter(encAtivo).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const cancP = encPTodos.length - encP.length;
   const realizP = encP.filter(encRealizado);
   const formsP = new Set(turmasP.map(t => t.formacaoId));
   const addDays = n => { const d = new Date(TODAY+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
   const em7 = addDays(7);
-  const proximos = DB.encontros.filter(e => e.data>=TODAY).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const proximos = DB.encontros.filter(e => e.data>=TODAY && encAtivo(e)).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
   const prox7 = proximos.filter(e => e.data<=em7);
 
   // Turmas por situação (série única)
@@ -888,9 +905,9 @@ VIEWS['painel'] = () => {
   // Pontos de atenção
   const att = [];
   DB.turmas.filter(t => situacaoTurma(t)==='Inscrições abertas' && t.inscFim<=em7).forEach(t => att.push(['warning','clock','Inscrições encerram em breve', `${esc(t.nome)} · até ${fmt(t.inscFim)} · ${t.inscritos}/${t.vagas} vagas`, `go('turma-detalhe',{id:'${t.id}'})`]));
-  naoConcl.filter(t => !encDaTurma(t.id).length).forEach(t => att.push(['warning','calendar-x','Turma sem encontros', `${esc(t.nome)} · realização a partir de ${fmt(t.realIni)}`, `go('turma-detalhe',{id:'${t.id}',tab:'encontros'})`]));
-  naoConcl.filter(t => t.formacaoId).forEach(t => { const meta = formsDaTurma(t).reduce((a,f)=>a+f.carga,0), tot = encDaTurma(t.id).reduce((a,e)=>a+hrs(e.ini,e.fim),0);
-    if (encDaTurma(t.id).length && tot < meta) att.push(['info','gauge','Carga planejada abaixo da formação', `${esc(t.nome)} · ${fh(tot)} de ${meta}h`, `go('turma-detalhe',{id:'${t.id}',tab:'encontros'})`]); });
+  naoConcl.filter(t => !encAtivosDaTurma(t.id).length).forEach(t => att.push(['warning','calendar-x','Turma sem encontros', `${esc(t.nome)} · realização a partir de ${fmt(t.realIni)}`, `go('turma-detalhe',{id:'${t.id}',tab:'encontros'})`]));
+  naoConcl.forEach(t => { const meta = t.carga, tot = encAtivosDaTurma(t.id).reduce((a,e)=>a+hrs(e.ini,e.fim),0);
+    if (encAtivosDaTurma(t.id).length && tot < meta) att.push(['info','gauge','Carga planejada abaixo da carga da turma', `${esc(t.nome)} · ${fh(tot)} de ${meta}h`, `go('turma-detalhe',{id:'${t.id}',tab:'encontros'})`]); });
   ativas.filter(f => !turmasDaFormacao(f.id).length).forEach(f => att.push(['neutral','book-open','Formação ativa sem turma', `${esc(f.titulo)} · ${f.carga}h`, `go('formacao-form',{id:'${f.id}'})`]));
   const tone = {danger:'tone-red', warning:'tone-amber', info:'tone-blue', neutral:'tone-gray'};
   const listaAtt = att.slice(0,6).map(([k,i,tt,d,act]) => `<div class="list-row"><span class="ico-s ${tone[k]}">${ico(i)}</span><div class="m"><div class="t">${tt}</div><div class="d">${d}</div></div><button class="btn btn-ghost btn-icon" title="Abrir" onclick="${act}">${ico('chevron-right')}</button></div>`).join('');
@@ -899,7 +916,7 @@ VIEWS['painel'] = () => {
   const rows = DB.formacoes.filter(f => f.situacao!=='Desativada').map(f => { const ts = turmasP.filter(t => t.formacaoId === f.id); const v = ts.reduce((a,t)=>a+t.vagas,0), i = ts.reduce((a,t)=>a+t.inscritos,0); /* turmas em realização no período */
     return {f, ts, v, i}; }).sort((a,b) => b.ts.length - a.ts.length || b.i - a.i).map(({f,ts,v,i}) => `<tr>
       <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('formacao-painel',{id:'${f.id}'})">${esc(f.titulo)}</button><div class="cell-sub">${f.codigo}</div></td><td>${badgeForm(f.situacao)}</td>
-      <td class="num">${ts.length}</td><td class="num">${DB.encontros.filter(e => ts.some(t => t.id===e.turmaId) && e.data>=per.ini && e.data<=per.fim).length}</td><td class="num">${v}</td><td class="num">${i}</td><td class="num">${v ? Math.round(i/v*100)+'%' : '—'}</td>
+      <td class="num">${ts.length}</td><td class="num">${DB.encontros.filter(e => encAtivo(e) && ts.some(t => t.id===e.turmaId) && e.data>=per.ini && e.data<=per.fim).length}</td><td class="num">${v}</td><td class="num">${i}</td><td class="num">${v ? Math.round(i/v*100)+'%' : '—'}</td>
       <td class="acts"><button class="btn btn-ghost btn-icon" title="Painel da formação" onclick="go('formacao-painel',{id:'${f.id}'})">${ico('chevron-right')}</button></td></tr>`);
 
   return { crumbs:['Oferta formativa','Painel'], html:`
@@ -911,7 +928,7 @@ VIEWS['painel'] = () => {
         ${statCard('Formações ativas', ativas.length, 'book-open-check', 'blue', `<span class="badge info">${ico('layers')}${formsP.size} ofertada(s) no período</span>`)}
         ${statCard('Turmas no período', turmasP.length, 'users-round', 'green', `<span class="badge success">${ico('activity')}${DB.turmas.filter(t => situacaoTurma(t)==='Em andamento').length} em andamento hoje</span>`)}
         ${statCard('Ocupação de vagas', ocup===null ? '—' : `${ocup}%`, 'user-check', 'gray', `<span class="badge neutral">${ico('users')}${inscritos} de ${vagas} vagas das turmas do período</span>`)}
-        ${statCard('Encontros no período', encP.length, 'calendar-days', 'amber', `<span class="badge warning">${ico('clock')}${realizP.length} realizado(s) · ${encP.length - realizP.length} previsto(s)</span>`)}
+        ${statCard('Encontros no período', encP.length, 'calendar-days', 'amber', `<span class="badge warning">${ico('clock')}${realizP.length} realizado(s) · ${encP.length - realizP.length} previsto(s)${cancP ? ` · ${cancP} cancelado(s)` : ''}</span>`)}
       </div>
       <div class="dash-grid">
         <div class="ui-card">${cardHead('chart-bar','Turmas por situação','Turmas em realização no período · situação de hoje')}<div class="ui-card-c"><div class="bars">${barsSit}</div></div></div>
@@ -1068,7 +1085,7 @@ VIEWS['turmas'] = () => {
   const abertas = sitCount('Inscrições abertas'), aguardando = sitCount('Planejada','Inscrições encerradas');
   const andamento = sitCount('Em andamento'), concluidas = sitCount('Concluída');
   const rows = lista.map(t => {
-    const fs = formsDaTurma(t), l = lById(t.localId), n = encDaTurma(t.id).length;
+    const fs = formsDaTurma(t), l = lById(t.localId), n = encAtivosDaTurma(t.id).length;
     return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+fs.map(f=>f.titulo).join(' ')+' '+(l?l.nome:'')).toLowerCase())}">
       <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}</div></td>
       <td>${fs.length ? `<div>${esc(fs[0].titulo)}</div><div class="cell-sub">${fs[0].carga}h · ${fs[0].modalidade}</div>` : `<span class="badge danger">${ico('unlink')}Sem formação</span>`}</td>
@@ -1125,7 +1142,7 @@ function buildTurmaForm(o = {}, mode = 'page'){
   S.turmaModal = { id: o.id || null, ctx, mode };
   const sel = editing ? editing.formacaoId : (fixa || '');
   const listaF = DB.formacoes.filter(f => (f.situacao==='Ativa' && !(src && !fixa && f.id===src.formacaoId)) || f.id===sel);
-  const blank = {codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), nome:'', publico:'', etapa:'', modEnsino:'', modalidade:'', vagas:'', inscIni:'', inscFim:'', realIni:'', realFim:'', turno:'', hIni:'', hFim:'', localId:''};
+  const blank = {codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), nome:'', publico:'', etapa:'', modEnsino:'', modalidade:'', vagas:'', carga:'', inscIni:'', inscFim:'', realIni:'', realFim:'', turno:'', hIni:'', hFim:'', localId:''};
   const v = editing || (src ? {...blank, publico:src.publico, etapa:src.etapa, modEnsino:src.modEnsino, modalidade:src.modalidade, vagas:src.vagas, turno:src.turno, hIni:src.hIni, hFim:src.hFim, localId:src.localId} : blank);
   const aviso = src
     ? alertBox('warn', `Reaproveitando ${esc(src.nome)}`, `Público, características, local e formadores foram copiados (formação de origem: ${esc(formDaTurma(src).titulo)}). Informe o nome, ${fixa ? '' : '<b>a nova formação</b>, '}e os <b>novos períodos</b>; inscrições e encontros não são copiados.`)
@@ -1142,13 +1159,13 @@ function buildTurmaForm(o = {}, mode = 'page'){
       <div class="field"><label>Código</label><input value="${v.codigo}" readonly></div></div>`)}
     ${hr}
     ${sec('book-open','Formação','Curso que esta turma oferta', `<div class="grid g2" style="align-items:end">
-      <div class="field"><label>Formação<span class="req">*</span></label><select id="t-form" onchange="updFormInfo()" ${fixa || editing ? 'disabled' : ''}>${opts(listaF.map(f => [f.id, `${f.titulo} · ${f.codigo}`]), sel, 'Selecione a formação')}</select></div>
-      <span class="hint" id="form-info" style="padding-bottom:9px"></span></div>`)}
+      <div class="field"><label>Formação<span class="req">*</span></label><select id="t-form" onchange="updFormInfo(true)" ${fixa || editing ? 'disabled' : ''}>${opts(listaF.map(f => [f.id, `${f.titulo} · ${f.codigo}`]), sel, 'Selecione a formação')}</select><span class="hint" id="form-info"></span></div>
+      <div class="field"><label>Carga horária da turma (h)<span class="req">*</span></label><input id="t-carga" type="number" min="1" value="${v.carga}" placeholder="Ex.: 12"><span class="hint" id="carga-info">Sugerida pela formação; pode ser ajustada.</span></div></div>`)}
     ${hr}
     ${sec('users-round','Público e características','Quem participa e como a turma acontece', `<div class="grid g4">
       <div class="field span2"><label>Público-alvo<span class="req">*</span></label><input id="t-publico" value="${esc(v.publico)}" placeholder="Ex.: Servidores da GETAG"></div>
       <div class="field"><label>Etapa</label><select id="t-etapa">${opts(['Não se aplica','Educação Infantil','Ensino Fundamental – Anos Iniciais','Ensino Fundamental – Anos Finais','Ensino Médio'], v.etapa, 'Selecione')}</select></div>
-      <div class="field"><label>Vagas<span class="req">*</span></label><input id="t-vagas" type="number" min="1" value="${v.vagas}" placeholder="Ex.: 35"></div>
+      <div class="field"><label>Nº de participantes<span class="req">*</span></label><input id="t-vagas" type="number" min="1" value="${v.vagas}" placeholder="Ex.: 35"></div>
       <div class="field span2"><label>Modalidade de ensino</label><select id="t-modens">${opts(['Regular','EJA','Educação Especial','Educação Indígena'], v.modEnsino, 'Selecione')}</select></div>
       <div class="field span2"><label>Tipo de oferta<span class="req">*</span></label><select id="t-mod">${opts(['Presencial','Híbrido','EAD'], v.modalidade, 'Selecione')}</select></div></div>`)}
     ${hr}
@@ -1198,10 +1215,12 @@ VIEWS['turma-form'] = () => {
     </div></div>
   </div>`, after: () => { renderDraft(); updFormInfo(); } };
 };
-function updFormInfo(){
+function updFormInfo(trocou){
   const el = $('form-info'); if (!el) return;
-  const f = fById($('t-form').value);
+  const f = fById($('t-form').value), c = $('t-carga');
   el.innerHTML = f ? `${f.carga}h · ${f.modalidade} · ${esc(f.publico)}` : 'Somente formações ativas aparecem.';
+  if (f && c && (!c.value || (trocou && c.dataset.sugerida === c.value))) c.value = f.carga;   /* sugere a carga da formação */
+  if (f && c) { c.dataset.sugerida = String(f.carga); $('carga-info').textContent = `Sugerida pela formação: ${f.carga}h. Pode ser ajustada.`; }
 }
 
 function renderDraft(){
@@ -1223,13 +1242,13 @@ function addDraft(){
 
 function salvarTurma(next){
   const g = id => $(id).value.trim();
-  const d = {nome:g('t-nome'), publico:g('t-publico'), etapa:g('t-etapa'), modEnsino:g('t-modens'), modalidade:g('t-mod'), vagas:+g('t-vagas'),
+  const d = {nome:g('t-nome'), publico:g('t-publico'), etapa:g('t-etapa'), modEnsino:g('t-modens'), modalidade:g('t-mod'), vagas:+g('t-vagas'), carga:+g('t-carga'),
     inscIni:g('t-ii'), inscFim:g('t-if'), realIni:g('t-ri'), realFim:g('t-rf'), turno:g('t-turno'), hIni:g('t-hi'), hFim:g('t-hf'), localId:g('t-local')};
   const formacaoId = $('t-form').value;
   const falta = [];
   if (!d.nome) falta.push('nome'); if (!formacaoId) falta.push('formação');
   if (!d.publico) falta.push('público-alvo'); if (!d.modalidade) falta.push('tipo de oferta');
-  if (!d.vagas) falta.push('vagas'); if (!d.inscIni || !d.inscFim) falta.push('período de inscrição');
+  if (!d.vagas) falta.push('nº de participantes'); if (!d.carga) falta.push('carga horária'); if (!d.inscIni || !d.inscFim) falta.push('período de inscrição');
   if (!d.realIni || !d.realFim) falta.push('período de realização'); if (!d.localId) falta.push('local');
   if (falta.length) return toast('Preencha: ' + falta.join(', ') + '.', 'err');
   if (d.inscIni > d.inscFim || d.realIni > d.realFim) return toast('A data de início não pode ser posterior à data de fim.', 'err');
@@ -1242,7 +1261,7 @@ function salvarTurma(next){
   if (t){
     const fora = encDaTurma(t.id).filter(e => e.data < d.realIni || e.data > d.realFim);
     if (fora.length) return toast(`${fora.length} encontro(s) ficariam fora do novo período de realização. Ajuste-os antes.`, 'err');
-    if (d.vagas < t.inscritos) return toast(`A turma já tem ${t.inscritos} inscritos; as vagas não podem ser menores.`, 'err');
+    if (d.vagas < t.inscritos) return toast(`A turma já tem ${t.inscritos} inscritos; o nº de participantes não pode ser menor.`, 'err');
     Object.assign(t, d, {formadores:S.draft});
   } else {
     t = {id:'T'+DB.seq.turma, codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), inscritos:0, ...d, formadores:S.draft};
@@ -1265,7 +1284,7 @@ VIEWS['turma-detalhe'] = () => {
   const fs = formsDaTurma(t), l = lById(t.localId);
   const encs = encDaTurma(t.id);
   const sit = situacaoTurma(t);
-  const tabs = [['acomp','Acompanhamento'],['dados','Visão geral'],['encontros',`Encontros (${encs.length})`],['formadores',`Formadores (${t.formadores.length})`]]
+  const tabs = [['acomp','Acompanhamento'],['dados','Visão geral'],['encontros',`Encontros (${encs.filter(encAtivo).length})`],['formadores',`Formadores (${t.formadores.length})`]]
     .map(([k,lbl]) => `<span class="${k===tab?'active':''}" onclick="S.params.tab='${k}';render()">${lbl}</span>`).join('');
   let body = '';
 
@@ -1315,7 +1334,8 @@ VIEWS['turma-detalhe'] = () => {
           <div><dt>Modalidade de ensino</dt><dd>${esc(t.modEnsino||'—')}</dd></div>
           <div><dt>Inscrição</dt><dd>${fmt(t.inscIni)} – ${fmt(t.inscFim)}</dd></div>
           <div><dt>Realização</dt><dd>${fmt(t.realIni)} – ${fmt(t.realFim)}</dd></div>
-          <div><dt>Inscritos / vagas</dt><dd>${t.inscritos} / ${t.vagas}</dd></div>
+          <div><dt>Inscritos / Nº de participantes</dt><dd>${t.inscritos} / ${t.vagas}</dd></div>
+          <div><dt>Carga horária</dt><dd>${t.carga}h</dd></div>
           <div><dt>Turno / horário</dt><dd>${t.turno||'—'}${t.hIni ? ` · ${t.hIni} às ${t.hFim}` : ''}</dd></div>
           <div class="span2"><dt>Local</dt><dd>${l ? esc(l.nome)+' — '+esc(l.municipio) : '—'}</dd></div>
         </dl></div>
@@ -1339,23 +1359,26 @@ VIEWS['turma-detalhe'] = () => {
   }
 
   if (tab==='encontros'){
-    const total = encs.reduce((s,e) => s + hrs(e.ini,e.fim), 0);
-    const meta = fs.length ? fs.reduce((a,f) => a + f.carga, 0) : null;
+    const ativos = encs.filter(encAtivo), canc = encs.length - ativos.length;
+    const total = ativos.reduce((s,e) => s + hrs(e.ini,e.fim), 0);
+    const meta = t.carga || null;
     const pct = meta ? Math.min(100, Math.round(total/meta*100)) : 0;
-    const rows = encs.map((e,i) => `<tr class="${e.data<TODAY?'past':''}">
-      <td><div class="cell-main">${e.codigo}</div><div class="cell-sub">Encontro ${i+1}</div></td>
-      <td class="num">${fmt(e.data)} ${e.data===TODAY ? '<span class="badge info">Hoje</span>' : e.data<TODAY ? '<span class="badge neutral">Realizado</span>' : ''}</td>
-      <td class="num">${e.ini} – ${e.fim}</td><td class="num">${fh(hrs(e.ini,e.fim))}</td>
-      <td>${l ? esc(l.nome) : '—'}</td><td>${esc(e.obs)||'<span class="muted">—</span>'}</td>
-      <td class="acts"><button class="btn btn-ghost btn-icon danger" title="Excluir encontro" onclick="removerEncontro('${e.id}')">${ico('trash-2')}</button></td></tr>`);
+    let nAtivo = 0;
+    const rows = encs.map(e => { if (encAtivo(e)) nAtivo++; return `<tr class="${e.cancelado ? 'cancelled' : e.data<TODAY ? 'past' : ''}">
+      <td><div class="cell-main">${e.codigo}</div><div class="cell-sub">${e.cancelado ? 'Não conta para carga e frequência' : `Encontro ${nAtivo}`}</div></td>
+      <td class="num">${fmt(e.data)}</td>
+      <td>${badgeEnc(e)}</td>
+      <td class="num">${e.ini} – ${e.fim}</td><td class="num">${e.cancelado ? '<span class="muted">—</span>' : fh(hrs(e.ini,e.fim))}</td>
+      <td>${e.cancelado ? `<span class="motivo">${esc(e.motivo||'')}</span>` : (esc(e.obs)||'<span class="muted">—</span>')}</td>
+      <td class="acts">${acoesEnc(e)}</td></tr>`; });
     body = `
       ${alertBox('info','', `O <b>local é sempre o da turma</b> e a data deve estar dentro do período de realização (${fmt(t.realIni)} – ${fmt(t.realFim)}). Os encontros são definidos pelo administrador e também aparecem na tela <button class="btn-link" onclick="S.filtroTurma='${t.id}';go('encontros')">Encontros</button>.`)}
       <div class="stats">
-        ${statCard('Encontros', encs.length, 'calendar-days', 'blue', `<span class="badge neutral">${ico('clock')}${encs.filter(e=>e.data>=TODAY).length} a realizar</span>`)}
+        ${statCard('Encontros', ativos.length, 'calendar-days', 'blue', `<span class="badge neutral">${ico('clock')}${ativos.filter(e=>e.data>=TODAY).length} a realizar${canc ? ` · ${canc} cancelado(s)` : ''}</span>`)}
         <div class="ui-card stat" style="grid-column:span 2">
           <div class="stat-h"><span>Carga planejada nos encontros</span><span class="stat-ico tone-green">${ico('gauge')}</span></div>
-          <div class="stat-v">${fh(total)} ${meta ? `<small>de ${meta}h ${fs.length>1?`das ${fs.length} formações`:'da formação'} · ${pct}%</small>` : ''}</div>
-          ${meta ? `<div class="progress ${total>meta?'over':''}"><div style="width:${pct}%"></div></div>` : `<span class="badge warning">${ico('unlink')}Vincule uma formação para comparar</span>`}
+          <div class="stat-v">${fh(total)} ${meta ? `<small>de ${meta}h da turma · ${pct}%</small>` : ''}</div>
+          ${meta ? `<div class="progress ${total>meta?'over':''}"><div style="width:${pct}%"></div></div>` : `<span class="badge warning">${ico('triangle-alert')}Informe a carga horária da turma</span>`}
         </div>
       </div>
       <div class="ui-card">
@@ -1370,7 +1393,7 @@ VIEWS['turma-detalhe'] = () => {
         </div></div>
       </div>
       ${tableCard({ id:'tb-enc-t', label:'encontros', cols:7,
-        head:'<th>Código</th><th>Data</th><th>Horário</th><th>Carga</th><th>Local</th><th>Observação</th><th class="acts"></th>',
+        head:'<th>Código</th><th>Data</th><th>Situação</th><th>Horário</th><th>Carga</th><th>Observação / motivo</th><th class="acts"></th>',
         rows, empty:['calendar-x','Nenhum encontro cadastrado','Adicione o primeiro encontro desta turma.'] })}`;
   }
 
@@ -1415,7 +1438,7 @@ function validarEncontro(t, data, ini, fim){
   if (!data || !ini || !fim) return 'Informe data, início e fim.';
   if (fim <= ini) return 'O horário final deve ser posterior ao inicial.';
   if (data < t.realIni || data > t.realFim) return `Data fora do período de realização da turma ${t.nome} (${fmt(t.realIni)} – ${fmt(t.realFim)}).`;
-  if (encDaTurma(t.id).some(e => e.data===data && ini < e.fim && fim > e.ini)) return `A turma ${t.nome} já tem encontro nesse horário em ${fmt(data)}.`;
+  if (encAtivosDaTurma(t.id).some(e => e.data===data && ini < e.fim && fim > e.ini)) return `A turma ${t.nome} já tem encontro nesse horário em ${fmt(data)}.`;
   return null;
 }
 function criarEncontro(turmaId, data, ini, fim, obs){
@@ -1429,6 +1452,31 @@ function addEncontroTurma(turmaId){
   if (err) return toast(err, 'err');
   const e = criarEncontro(turmaId, data, ini, fim, obs);
   render(); toast(`Encontro ${e.codigo} criado para ${fmt(data)}.`);
+}
+function acoesEnc(e){
+  return e.cancelado
+    ? `<button class="btn btn-ghost btn-icon" title="Reativar encontro" onclick="reativarEncontro('${e.id}')">${ico('rotate-ccw')}</button><button class="btn btn-ghost btn-icon danger" title="Excluir encontro" onclick="removerEncontro('${e.id}')">${ico('trash-2')}</button>`
+    : `<button class="btn btn-ghost btn-icon" title="Cancelar encontro" onclick="modalCancelarEncontro('${e.id}')">${ico('ban')}</button><button class="btn btn-ghost btn-icon danger" title="Excluir encontro" onclick="removerEncontro('${e.id}')">${ico('trash-2')}</button>`;
+}
+function modalCancelarEncontro(id){
+  const e = DB.encontros.find(x => x.id===id), t = tById(e.turmaId);
+  openModal('Cancelar encontro', `<b>${e.codigo}</b> · ${esc(t.nome)} · ${fmt(e.data)}, ${e.ini} – ${e.fim}. O encontro continua registrado como <b>cancelado</b> e deixa de contar para a carga horária e a frequência.`, `
+    ${e.data < TODAY ? alertBox('warn','Encontro já ocorrido', 'Se houver frequência lançada para esta data, ela será desconsiderada <i>(a validar)</i>.') : ''}
+    <div class="field"><label>Motivo do cancelamento<span class="req">*</span></label><textarea id="m-motivo" rows="3" placeholder="Ex.: Feriado municipal; formador indisponível"></textarea></div>`,
+    `<button class="btn btn-outline" onclick="closeModal()">Voltar</button><button class="btn btn-destructive" onclick="confirmarCancelamento('${id}')">${ico('ban')}Cancelar encontro</button>`);
+}
+function confirmarCancelamento(id){
+  const motivo = $('m-motivo').value.trim();
+  if (!motivo) return toast('Informe o motivo do cancelamento.', 'err');
+  const e = DB.encontros.find(x => x.id===id);
+  Object.assign(e, {cancelado:true, motivo});
+  closeModal(); render(); toast(`Encontro ${e.codigo} cancelado.`);
+}
+function reativarEncontro(id){
+  const e = DB.encontros.find(x => x.id===id), t = tById(e.turmaId);
+  if (encAtivosDaTurma(t.id).some(o => o.data===e.data && e.ini < o.fim && e.fim > o.ini)) return toast(`A turma já tem outro encontro nesse horário em ${fmt(e.data)}.`, 'err');
+  e.cancelado = false; e.motivo = '';
+  render(); toast(`Encontro ${e.codigo} reativado.`);
 }
 function removerEncontro(id){
   const e = DB.encontros.find(x => x.id===id);
@@ -1451,16 +1499,17 @@ function addFormadorTurma(turmaId){
 VIEWS['encontros'] = () => {
   const ft = S.filtroTurma;
   const lista = DB.encontros.filter(e => ft==='todas' || e.turmaId===ft).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
-  const proximos = DB.encontros.filter(e => e.data>=TODAY).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
+  const proximos = DB.encontros.filter(e => e.data>=TODAY && encAtivo(e)).sort((a,b) => (a.data+a.ini).localeCompare(b.data+b.ini));
   const rows = lista.map(e => {
     const t = tById(e.turmaId), l = lById(t.localId);
-    return `<tr data-text="${esc((e.codigo+' '+t.nome+' '+nomesForms(t)+' '+(l?l.nome:'')).toLowerCase())}" class="${e.data<TODAY?'past':''}">
-      <td><div class="cell-main">${e.codigo}</div>${e.obs?`<div class="cell-sub">${esc(e.obs)}</div>`:''}</td>
-      <td class="num">${fmt(e.data)} ${e.data===TODAY ? '<span class="badge info">Hoje</span>' : e.data<TODAY ? '<span class="badge neutral">Realizado</span>' : ''}</td>
-      <td class="num">${e.ini} – ${e.fim}</td><td class="num">${fh(hrs(e.ini,e.fim))}</td>
+    return `<tr data-text="${esc((e.codigo+' '+t.nome+' '+nomesForms(t)+' '+(l?l.nome:'')+' '+sitEnc(e)).toLowerCase())}" class="${e.cancelado ? 'cancelled' : e.data<TODAY?'past':''}">
+      <td><div class="cell-main">${e.codigo}</div>${e.cancelado ? `<div class="cell-sub motivo">${esc(e.motivo||'')}</div>` : e.obs?`<div class="cell-sub">${esc(e.obs)}</div>`:''}</td>
+      <td class="num">${fmt(e.data)}</td>
+      <td>${badgeEnc(e)}</td>
+      <td class="num">${e.ini} – ${e.fim}</td><td class="num">${e.cancelado ? '<span class="muted">—</span>' : fh(hrs(e.ini,e.fim))}</td>
       <td><button class="btn-link" onclick="go('turma-detalhe',{id:'${t.id}',tab:'encontros'})">${esc(t.nome)}</button><div class="cell-sub">${esc(nomesForms(t))}</div></td>
       <td>${l ? esc(l.nome) : '—'}</td>
-      <td class="acts"><button class="btn btn-ghost btn-icon danger" title="Excluir" onclick="removerEncontro('${e.id}')">${ico('trash-2')}</button></td></tr>`;
+      <td class="acts">${acoesEnc(e)}</td></tr>`;
   });
   const turmaOpts = [['todas','Todas as turmas'], ...DB.turmas.map(t => [t.id, t.nome])];
   const prox = proximos[0];
@@ -1470,14 +1519,14 @@ VIEWS['encontros'] = () => {
     <div class="body"><div class="stack">
       ${alertBox('info','Todo encontro pertence a uma turma','Mas tem tela própria para consulta e cadastro em lote: o mesmo encontro pode ser criado para <b>várias turmas de uma vez</b> (um registro por turma). A frequência será lançada por encontro.')}
       <div class="stats">
-        ${statCard('Encontros', DB.encontros.length, 'calendar-days', 'blue', `<span class="badge info">${ico('clock')}${fh(DB.encontros.reduce((a,e)=>a+hrs(e.ini,e.fim),0))} planejadas</span>`)}
-        ${statCard('Realizados', DB.encontros.filter(e => e.data<TODAY).length, 'calendar-check', 'gray', `<span class="badge neutral">${ico('history')}Antes de hoje</span>`)}
+        ${statCard('Encontros', DB.encontros.filter(encAtivo).length, 'calendar-days', 'blue', `<span class="badge info">${ico('clock')}${fh(DB.encontros.filter(encAtivo).reduce((a,e)=>a+hrs(e.ini,e.fim),0))} planejadas</span>`)}
+        ${statCard('Realizados', DB.encontros.filter(e => encAtivo(e) && e.data<TODAY).length, 'calendar-check', 'gray', `<span class="badge ${DB.encontros.some(e=>e.cancelado)?'danger':'neutral'}">${ico('ban')}${DB.encontros.filter(e=>e.cancelado).length} cancelado(s)</span>`)}
         ${statCard('A realizar', proximos.length, 'calendar-clock', 'green', `<span class="badge success">${ico('calendar')}A partir de ${fmt(TODAY)}</span>`)}
         ${statCard('Próximo encontro', prox ? fmt(prox.data) : '—', 'alarm-clock', 'amber', prox ? `<span class="badge warning">${ico('clock')}${prox.ini} · ${esc(tById(prox.turmaId).nome)}</span>` : '')}
       </div>
-      ${tableCard({ id:'tb-enc', label:'encontros', cols:7,
+      ${tableCard({ id:'tb-enc', label:'encontros', cols:8,
         toolbar: `${searchBox('Buscar encontros…','tb-enc')}<select onchange="S.filtroTurma=this.value;render()">${opts(turmaOpts, ft)}</select><div class="right"><button class="btn btn-primary" onclick="modalEncontro()">${ico('plus')}Novo encontro</button></div>`,
-        head:'<th>Código</th><th>Data</th><th>Horário</th><th>Carga</th><th>Turma</th><th>Local (da turma)</th><th class="acts"></th>',
+        head:'<th>Código</th><th>Data</th><th>Situação</th><th>Horário</th><th>Carga</th><th>Turma</th><th>Local (da turma)</th><th class="acts"></th>',
         rows, empty:['calendar-x','Nenhum encontro encontrado','Ajuste o filtro ou crie um novo encontro.'] })}
     </div></div>
   </div>`};
