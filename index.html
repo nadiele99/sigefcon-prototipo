@@ -366,20 +366,18 @@ svg.lucide{stroke-width:2;}
 .sb-user{position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:40px;border-radius:8px;cursor:pointer;outline:none;}
 .sb-user:focus-visible .sb-avatar{outline:2px solid #8298C1;outline-offset:2px;border-radius:50%;}
 .sb-user:hover .sb-hello{color:#D7E5FF;}
-.sb-menu-pop{position:absolute;top:100%;left:-10px;margin-top:2px;min-width:224px;background:#fff;color:var(--fg);border:1px solid var(--border);border-radius:var(--r-md, 8px);box-shadow:0 10px 30px rgba(0,17,47,.25);padding:4px;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility 0s .15s;z-index:80;cursor:default;}
+.sb-menu-pop{position:absolute;top:100%;left:-6px;margin-top:2px;min-width:176px;background:#fff;color:var(--fg);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,17,47,.12);padding:3px;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .15s,transform .15s,visibility 0s .15s;z-index:80;cursor:default;}
 .sb-menu-pop::before{content:"";position:absolute;left:0;right:0;top:-8px;height:8px;}
 .sb-user:hover .sb-menu-pop,.sb-user:focus-within .sb-menu-pop{opacity:1;visibility:visible;transform:none;transition-delay:0s;}
-.sb.closed .sb-menu-pop{top:-6px;left:calc(100% + 12px);margin-top:0;transform:translateX(-4px);}
-.sb.closed .sb-menu-pop::before{top:0;bottom:0;left:-14px;width:14px;right:auto;height:auto;}
+.sb.closed .sb-menu-pop{top:-4px;left:calc(100% + 10px);margin-top:0;transform:translateX(-3px);}
+.sb.closed .sb-menu-pop::before{top:0;bottom:0;left:-12px;width:12px;right:auto;height:auto;}
 .sb.closed .sb-user:hover .sb-menu-pop,.sb.closed .sb-user:focus-within .sb-menu-pop{transform:none;}
-.sb-pop-head{display:flex;align-items:center;gap:10px;padding:8px;}
-.sb-pop-av{width:32px;height:32px;border-radius:50%;background:var(--navy-700);color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
-.sb-pop-head b{display:block;font-size:13.5px;font-weight:600;} .sb-pop-head div span{display:block;font-size:12px;color:var(--muted-fg);}
-.sb-pop-sep{height:1px;background:var(--border);margin:4px -4px;}
-.sb-pop-item{width:100%;display:flex;align-items:center;gap:8px;height:34px;padding:0 8px;border:0;border-radius:6px;background:transparent;font-size:13.5px;color:var(--fg);cursor:pointer;text-align:left;}
-.sb-pop-item svg{width:16px;height:16px;}
-.sb-pop-item:hover,.sb-pop-item:focus-visible{background:var(--muted-bg);outline:none;}
-.sb-pop-item.danger{color:#B42318;} .sb-pop-item.danger:hover{background:#FEF3F2;}
+.sb-pop-head{padding:6px 8px 5px;line-height:1.3;}
+.sb-pop-head b{display:block;font-size:12.5px;font-weight:600;} .sb-pop-head span{display:block;font-size:11px;color:var(--muted-fg);}
+.sb-pop-sep{height:1px;background:var(--border);margin:3px -3px;}
+.sb-pop-item{width:100%;display:flex;align-items:center;gap:7px;height:28px;padding:0 8px;border:0;border-radius:5px;background:transparent;font-size:12.5px;color:#3F3F46;cursor:pointer;text-align:left;}
+.sb-pop-item svg{width:14px;height:14px;color:var(--muted-fg);}
+.sb-pop-item:hover,.sb-pop-item:focus-visible{background:var(--muted-bg);color:var(--fg);outline:none;}
 .sb-ico-open,.sb-ico-closed{display:inline-flex;} .sb.open .sb-ico-closed,.sb.closed .sb-ico-open{display:none;}
 .sb-content{transition:padding .28s cubic-bezier(.4,0,.2,1);} .sb.closed .sb-content{padding-left:12px;padding-right:12px;}
 .act-gap{display:inline-block;width:32px;height:1px;vertical-align:middle;}
@@ -929,9 +927,9 @@ function sidebarGhost(){
         <span class="sb-avatar">${ico('circle-user-round')}</span>
         <span class="sb-hello">Olá, Maria Silva</span>
         <div class="sb-menu-pop" role="menu">
-          <div class="sb-pop-head"><span class="sb-pop-av">MS</span><div><b>Maria Silva</b><span>maria.silva@seduc.am.gov.br</span></div></div>
+          <div class="sb-pop-head"><b>Maria Silva</b><span>maria.silva@seduc.am.gov.br</span></div>
           <div class="sb-pop-sep"></div>
-          <button class="sb-pop-item danger" role="menuitem" onclick="sair()">${ico('log-out')}Sair</button>
+          <button class="sb-pop-item" role="menuitem" onclick="sair()">${ico('log-out')}Sair</button>
         </div>
       </div>
       <button class="sb-chev" title="Recolher menu" aria-label="Recolher menu" onclick="toggleSb(false)">${ico('chevron-left')}</button>
