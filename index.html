@@ -329,7 +329,7 @@ svg.lucide{stroke-width:2;}
 .acesso-priv{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .token-chip{display:inline-flex;align-items:center;gap:4px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--muted-bg);border:1px solid var(--border);border-radius:6px;padding:2px 2px 2px 8px;} .token-chip .btn-xs{margin:0;}
 .sb{position:sticky;top:calc(var(--pb-h, 96px) + 16px);align-self:flex-start;height:calc(100vh - var(--pb-h, 96px) - 32px);margin:16px 0 16px 16px;flex-shrink:0;
-  display:flex;flex-direction:column;border-radius:12px;overflow:hidden;color:#D7E5FF;
+  display:flex;flex-direction:column;border-radius:12px;overflow:visible;color:#D7E5FF;z-index:40;
   background:linear-gradient(178deg,#003695 0%,#00112F 26%);box-shadow:0 4px 14px rgba(0,17,47,.25);transition:width .28s cubic-bezier(.4,0,.2,1);font-family:"Inter","Segoe UI",sans-serif;}
 .sb.open{width:186px;} .sb.closed{width:78px;}
 .sb-header{height:74px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 10px 0 22px;transition:padding .28s cubic-bezier(.4,0,.2,1);}
@@ -340,7 +340,7 @@ svg.lucide{stroke-width:2;}
 .sb.closed .sb-hello,.sb.closed .sb-chev{opacity:0;pointer-events:none;transition-delay:0s;}
 .sb-chev{transition:opacity .18s ease .1s,background .15s;width:16px;height:16px;border-radius:4px;border:0;padding:0;background:#3E5E98;color:#D7E5FF;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 2px 1px rgba(0,0,0,.25);flex-shrink:0;}
 .sb-chev:hover{background:#4c6fae;} .sb-chev svg{width:12px;height:12px;}
-.sb-content{flex:1;background:rgba(217,217,217,.08);border-radius:12px 12px 0 0;box-shadow:0 -2px 0 rgba(0,0,0,.25);padding:28px 12px 16px;overflow-y:auto;}
+.sb-content{flex:1;background:rgba(217,217,217,.08);border-radius:12px;box-shadow:0 -2px 0 rgba(0,0,0,.25);padding:28px 12px 16px;overflow-y:auto;}
 .sb-menu{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
 .sb-btn{width:100%;display:flex;align-items:center;gap:12px;height:36px;padding:0 10px 0 15px;overflow:hidden;border:0;border-radius:8px;background:transparent;color:#D7E5FF;font-size:13.5px;font-weight:500;cursor:pointer;text-align:left;white-space:nowrap;transition:background .15s;}
 .sb-btn svg{width:20px;height:20px;flex-shrink:0;}
@@ -363,6 +363,23 @@ svg.lucide{stroke-width:2;}
 .sb.closed .sb-sub-wrap{grid-template-rows:0fr;visibility:hidden;}
 .sb-group:not(.open) .sb-sub{border-left-color:transparent;}
 .sb.closed .sb-btn.active-parent{background:rgba(215,229,255,.16);box-shadow:inset 3px 0 0 #F4C430;}
+.sb-user{position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:40px;border-radius:8px;cursor:pointer;outline:none;}
+.sb-user:focus-visible .sb-avatar{outline:2px solid #8298C1;outline-offset:2px;border-radius:50%;}
+.sb-user:hover .sb-hello{color:#D7E5FF;}
+.sb-menu-pop{position:absolute;top:100%;left:-10px;margin-top:2px;min-width:224px;background:#fff;color:var(--fg);border:1px solid var(--border);border-radius:var(--r-md, 8px);box-shadow:0 10px 30px rgba(0,17,47,.25);padding:4px;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility 0s .15s;z-index:80;cursor:default;}
+.sb-menu-pop::before{content:"";position:absolute;left:0;right:0;top:-8px;height:8px;}
+.sb-user:hover .sb-menu-pop,.sb-user:focus-within .sb-menu-pop{opacity:1;visibility:visible;transform:none;transition-delay:0s;}
+.sb.closed .sb-menu-pop{top:-6px;left:calc(100% + 12px);margin-top:0;transform:translateX(-4px);}
+.sb.closed .sb-menu-pop::before{top:0;bottom:0;left:-14px;width:14px;right:auto;height:auto;}
+.sb.closed .sb-user:hover .sb-menu-pop,.sb.closed .sb-user:focus-within .sb-menu-pop{transform:none;}
+.sb-pop-head{display:flex;align-items:center;gap:10px;padding:8px;}
+.sb-pop-av{width:32px;height:32px;border-radius:50%;background:var(--navy-700);color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-pop-head b{display:block;font-size:13.5px;font-weight:600;} .sb-pop-head div span{display:block;font-size:12px;color:var(--muted-fg);}
+.sb-pop-sep{height:1px;background:var(--border);margin:4px -4px;}
+.sb-pop-item{width:100%;display:flex;align-items:center;gap:8px;height:34px;padding:0 8px;border:0;border-radius:6px;background:transparent;font-size:13.5px;color:var(--fg);cursor:pointer;text-align:left;}
+.sb-pop-item svg{width:16px;height:16px;}
+.sb-pop-item:hover,.sb-pop-item:focus-visible{background:var(--muted-bg);outline:none;}
+.sb-pop-item.danger{color:#B42318;} .sb-pop-item.danger:hover{background:#FEF3F2;}
 .sb-ico-open,.sb-ico-closed{display:inline-flex;} .sb.open .sb-ico-closed,.sb.closed .sb-ico-open{display:none;}
 .sb-content{transition:padding .28s cubic-bezier(.4,0,.2,1);} .sb.closed .sb-content{padding-left:12px;padding-right:12px;}
 .act-gap{display:inline-block;width:32px;height:1px;vertical-align:middle;}
@@ -880,6 +897,7 @@ function toggleSbSub(btn){
   const li = btn.closest('.sb-group'); if (S.sbOpen === false){ toggleSb(true); li.classList.add('open'); S.sbSub = true; return; }
   S.sbSub = !li.classList.contains('open'); li.classList.toggle('open', S.sbSub); btn.setAttribute('aria-expanded', S.sbSub);
 }
+function sair(){ document.activeElement && document.activeElement.blur(); toast('Sessão encerrada. (No sistema, volta para a tela de login.)'); }
 /* abre/fecha sem re-renderizar a tela, para a transição de largura acontecer */
 function toggleSb(force){
   S.sbOpen = force === undefined ? S.sbOpen === false : force;
@@ -907,8 +925,15 @@ function sidebarGhost(){
   return `
   <aside class="sb ${open ? 'open' : 'closed'}" data-state="${open ? 'expanded' : 'collapsed'}">
     <div class="sb-header">
-      <span class="sb-avatar">${ico('circle-user-round')}</span>
-      <span class="sb-hello">Olá, Maria Silva</span>
+      <div class="sb-user" tabindex="0" aria-haspopup="menu" aria-label="Conta de Maria Silva">
+        <span class="sb-avatar">${ico('circle-user-round')}</span>
+        <span class="sb-hello">Olá, Maria Silva</span>
+        <div class="sb-menu-pop" role="menu">
+          <div class="sb-pop-head"><span class="sb-pop-av">MS</span><div><b>Maria Silva</b><span>maria.silva@seduc.am.gov.br</span></div></div>
+          <div class="sb-pop-sep"></div>
+          <button class="sb-pop-item danger" role="menuitem" onclick="sair()">${ico('log-out')}Sair</button>
+        </div>
+      </div>
       <button class="sb-chev" title="Recolher menu" aria-label="Recolher menu" onclick="toggleSb(false)">${ico('chevron-left')}</button>
     </div>
     <div class="sb-content">
