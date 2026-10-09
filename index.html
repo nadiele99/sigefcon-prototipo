@@ -1236,7 +1236,7 @@ VIEWS['turmas'] = () => {
         ${statCard('Concluídas', concluidas, 'flag', 'gray', `<span class="badge outline">${ico('check')}Período encerrado</span>`)}
       </div>
       ${tableCard({ id:'tb-tur', label:'turmas', cols:8,
-        toolbar: `${searchBox('Buscar turmas…','tb-tur')}<select onchange="S.filtroFormacao=this.value;render()">${opts(filtroOpts, ff)}</select><div class="right"><button class="btn btn-outline btn-icon" style="width:36px;height:36px" title="Novo encontro (uma ou mais turmas)" onclick="S.filtroTurma='todas';modalEncontro()">${ico('calendar-plus')}</button><button class="btn btn-primary" onclick="go('turma-form')">${ico('plus')}Nova turma</button></div>`,
+        toolbar: `${searchBox('Buscar turmas…','tb-tur')}<select onchange="S.filtroFormacao=this.value;render()">${opts(filtroOpts, ff)}</select><div class="right"><button class="btn btn-outline btn-icon" style="width:36px;height:36px" title="Novo encontro" onclick="S.filtroTurma='todas';modalEncontro()">${ico('calendar-plus')}</button><button class="btn btn-primary" onclick="go('turma-form')">${ico('plus')}Nova turma</button></div>`,
         head:'<th>Turma</th><th>Formação</th><th>Local</th><th>Realização</th><th>Inscritos</th><th>Encontros</th><th>Situação</th><th class="acts">Ações</th>',
         rows, empty:['users-round','Nenhuma turma encontrada','Ajuste o filtro ou cadastre uma nova turma.'] })}
     </div></div>
@@ -1653,7 +1653,7 @@ VIEWS['encontros'] = () => {
   <div class="card">
     <div class="title-band">Encontros</div>
     <div class="body"><div class="stack">
-      ${alertBox('info','Todo encontro pertence a uma turma','Mas tem tela própria para consulta e cadastro em lote: o mesmo encontro pode ser criado para <b>várias turmas de uma vez</b> (um registro por turma). A frequência será lançada por encontro.')}
+      ${alertBox('info','Todo encontro pertence a uma turma','Esta tela reúne os encontros de todas as turmas para consulta. O cadastro é <b>um encontro por vez</b>, sempre para uma turma. A frequência será lançada por encontro.')}
       <div class="stats">
         ${statCard('Encontros', DB.encontros.filter(encAtivo).length, 'calendar-days', 'blue', `<span class="badge info">${ico('clock')}${fh(DB.encontros.filter(encAtivo).reduce((a,e)=>a+hrs(e.ini,e.fim),0))} planejadas</span>`)}
         ${statCard('Realizados', DB.encontros.filter(e => encAtivo(e) && e.data<TODAY).length, 'calendar-check', 'gray', `<span class="badge ${DB.encontros.some(e=>e.cancelado)?'danger':'neutral'}">${ico('ban')}${DB.encontros.filter(e=>e.cancelado).length} cancelado(s)</span>`)}
@@ -1722,27 +1722,38 @@ function salvarLocal(){
 
 function modalEncontro(){
   const disp = DB.turmas.filter(t => situacaoTurma(t)!=='Concluída');
-  const pre = S.filtroTurma!=='todas' ? S.filtroTurma : null;
-  openModal('Novo encontro', 'Será criado <b>um encontro para cada turma</b> selecionada, no local da própria turma.', `
-    <div class="field"><label>Turmas<span class="req">*</span></label>
-      <div class="check-list">${disp.map(t => { const l = lById(t.localId); return `<label><input type="checkbox" class="cb m-et" value="${t.id}" ${t.id===pre?'checked':''}><div><div class="t">${esc(t.nome)}</div><div class="s">${esc(l?l.nome:'—')} · ${fmt(t.realIni)} – ${fmt(t.realFim)}</div></div></label>`; }).join('')}</div>
-      <span class="hint">Turmas concluídas não aparecem.</span></div>
+  const pre = S.filtroTurma!=='todas' && disp.some(t => t.id===S.filtroTurma) ? S.filtroTurma : '';
+  openModal('Novo encontro', 'Um encontro por vez, para <b>uma turma</b>. Ele acontece no local da própria turma.', `
+    <div class="field"><label>Turma<span class="req">*</span></label>
+      <select id="m-eturma" onchange="encTurmaInfo()"><option value="">Selecione a turma…</option>${disp.map(t => `<option value="${t.id}" ${t.id===pre?'selected':''}>${esc(t.nome)} — ${t.codigo}</option>`).join('')}</select>
+      <span class="hint" id="m-einfo">Turmas concluídas não aparecem.</span></div>
     <div class="grid g3">
       <div class="field"><label>Data<span class="req">*</span></label><input id="m-edata" type="date"></div>
       <div class="field"><label>Início<span class="req">*</span></label><input id="m-eini" type="time"></div>
       <div class="field"><label>Fim<span class="req">*</span></label><input id="m-efim" type="time"></div>
     </div>
     <div class="field"><label>Observação</label><input id="m-eobs" placeholder="Opcional"></div>`,
-    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarEncontrosLote()">${ico('calendar-plus')}Criar encontros</button>`);
+    `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarEncontroModal()">${ico('calendar-plus')}Criar encontro</button>`);
+  if (pre) encTurmaInfo();
 }
-function salvarEncontrosLote(){
-  const ids = [...document.querySelectorAll('.m-et:checked')].map(c => c.value);
+/* ao escolher a turma: mostra local/período, limita a data e sugere o horário do turno */
+function encTurmaInfo(){
+  const t = tById($('m-eturma').value), info = $('m-einfo'), d = $('m-edata');
+  if (!t){ info.textContent = 'Turmas concluídas não aparecem.'; d.min = d.max = ''; return; }
+  const l = lById(t.localId);
+  info.innerHTML = `${esc(l ? l.nome : '—')} · realização de ${fmt(t.realIni)} a ${fmt(t.realFim)} · turno ${esc(t.turno || '—')}`;
+  d.min = t.realIni; d.max = t.realFim;
+  if (t.hIni && !$('m-eini').value) $('m-eini').value = t.hIni;
+  if (t.hFim && !$('m-efim').value) $('m-efim').value = t.hFim;
+}
+function salvarEncontroModal(){
+  const id = $('m-eturma').value;
   const data = $('m-edata').value, ini = $('m-eini').value, fim = $('m-efim').value, obs = $('m-eobs').value.trim();
-  if (!ids.length) return toast('Selecione ao menos uma turma.', 'err');
-  const erros = ids.map(id => validarEncontro(tById(id), data, ini, fim)).filter(Boolean);
-  if (erros.length) return toast(erros[0] + (erros.length>1 ? ` (+${erros.length-1} outro(s) problema(s))` : ''), 'err');
-  ids.forEach(id => criarEncontro(id, data, ini, fim, obs));
-  closeModal(); render(); toast(`${ids.length} encontro(s) criado(s) para ${fmt(data)}.`);
+  if (!id) return toast('Selecione a turma.', 'err');
+  const err = validarEncontro(tById(id), data, ini, fim);
+  if (err) return toast(err, 'err');
+  const e = criarEncontro(id, data, ini, fim, obs);
+  closeModal(); render(); toast(`Encontro ${e.codigo} criado para ${fmt(data)}.`);
 }
 
 /* ========================================================= */
