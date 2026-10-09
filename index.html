@@ -320,7 +320,8 @@ svg.lucide{stroke-width:2;}
 .switch:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .token-label{display:flex !important;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap;}
 .btn.btn-xs{width:24px;height:24px;padding:0;margin:-5px 0;} .btn.btn-xs svg{width:14px;height:14px;}
-.priv{display:inline-flex;align-items:center;gap:3px;} .priv svg{width:12px;height:12px;}
+.name-line{display:flex;align-items:center;gap:6px;} .name-line .cell-main{text-align:left;}
+.priv-ico{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;border-radius:6px;background:#FEF3D6;color:#8A6100;cursor:help;} .priv-ico svg{width:12px;height:12px;}
 .sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:18px;border-top:1px solid var(--border);}
 .sec-title b{font-size:16px;font-weight:600;letter-spacing:-.01em;} .sec-title span{font-size:13.5px;color:var(--muted-fg);}
 .avatar-s{width:30px;height:30px;border-radius:50%;background:#EFF4FB;color:var(--navy-600);display:grid;place-items:center;font-size:11.5px;font-weight:600;flex-shrink:0;}
@@ -961,7 +962,7 @@ VIEWS['formacao-painel'] = () => {
   const m = metricas(ts);
   const rows = ts.map(t => { const mt = metricas([t]), l = lById(t.localId);
     return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+(l?l.nome:'')).toLowerCase())}">
-      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}${t.privada ? ` · <span class="priv">${ico('lock')}Privada</span>` : ''}</div></td>
+      <td><div class="name-line"><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button>${t.privada ? `<span class="priv-ico" title="Turma privada · acesso pelo token ${t.codigo}" aria-label="Turma privada">${ico('lock')}</span>` : ''}</div><div class="cell-sub">${t.codigo}</div></td>
       <td>${badgeTurma(t)}</td>
       <td class="num">${fmt(t.realIni)} – ${fmt(t.realFim)}</td>
       <td>${l ? esc(l.nome) : '—'}</td>
@@ -1097,7 +1098,7 @@ VIEWS['turmas'] = () => {
   const rows = lista.map(t => {
     const fs = formsDaTurma(t), l = lById(t.localId), n = encAtivosDaTurma(t.id).length;
     return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+fs.map(f=>f.titulo).join(' ')+' '+(l?l.nome:'')).toLowerCase())}">
-      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}${t.privada ? ` · <span class="priv">${ico('lock')}Privada</span>` : ''}</div></td>
+      <td><div class="name-line"><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button>${t.privada ? `<span class="priv-ico" title="Turma privada · acesso pelo token ${t.codigo}" aria-label="Turma privada">${ico('lock')}</span>` : ''}</div><div class="cell-sub">${t.codigo}</div></td>
       <td>${fs.length ? `<div>${esc(fs[0].titulo)}</div><div class="cell-sub">${fs[0].carga}h · ${fs[0].modalidade}</div>` : `<span class="badge danger">${ico('unlink')}Sem formação</span>`}</td>
       <td>${l ? `<div>${esc(l.nome)}</div><div class="cell-sub">${esc(l.municipio)}</div>` : '—'}</td>
       <td class="num">${fmt(t.realIni)} – ${fmt(t.realFim)}</td>
