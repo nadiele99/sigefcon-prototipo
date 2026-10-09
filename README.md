@@ -1,4 +1,4 @@
-# SIGEFCON · Protótipo de baixa fidelidade
+# SIGEFCON · Protótipo de média fidelidade
 
 Protótipo clicável do redesenho da área **Oferta formativa** do SIGEFCON (SEDUC-AM): Painel, Formações, Turmas e Encontros.
 
