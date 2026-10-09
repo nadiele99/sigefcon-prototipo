@@ -320,6 +320,9 @@ svg.lucide{stroke-width:2;}
 .switch:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .token-label{display:flex !important;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap;}
 .btn.btn-xs{width:24px;height:24px;padding:0;margin:-5px 0;} .btn.btn-xs svg{width:14px;height:14px;}
+.band-priv{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:#fff;background:rgba(244,196,48,.22);border:1px solid rgba(244,196,48,.55);padding:2px 8px;border-radius:20px;white-space:nowrap;} .band-priv svg{width:12px;height:12px;}
+.acesso-priv{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.token-chip{display:inline-flex;align-items:center;gap:4px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--muted-bg);border:1px solid var(--border);border-radius:6px;padding:2px 2px 2px 8px;} .token-chip .btn-xs{margin:0;}
 .act-gap{display:inline-block;width:32px;height:1px;vertical-align:middle;}
 .name-line{display:flex;align-items:center;gap:6px;} .name-line .cell-main{text-align:left;}
 .priv-ico{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;border-radius:6px;background:#FEF3D6;color:#8A6100;cursor:help;} .priv-ico svg{width:12px;height:12px;}
@@ -1354,7 +1357,7 @@ VIEWS['turma-detalhe'] = () => {
       <div class="ui-card">
         ${cardHead('info','Informações da turma', t.codigo, badgeTurma(t))}
         <div class="ui-card-c"><dl class="dl">
-          <div><dt>Acesso</dt><dd>${t.privada ? `<span class="badge neutral">${ico('lock')}Privada</span> <span class="muted">token ${t.codigo}</span>` : 'Aberta'}</dd></div>
+          <div><dt>Acesso</dt><dd>${t.privada ? `<span class="acesso-priv"><span class="badge warning">${ico('lock')}Privada</span><span class="token-chip">${t.codigo}<button type="button" class="btn btn-ghost btn-icon btn-xs" title="Copiar token de compartilhamento" aria-label="Copiar token" onclick="copiarToken('${t.codigo}')">${ico('copy')}</button></span></span>` : `<span class="badge neutral">${ico('lock-open')}Aberta</span>`}</dd></div>
           <div><dt>Público-alvo</dt><dd>${esc(t.publico)}</dd></div>
           <div><dt>Etapa</dt><dd>${esc(t.etapa||'—')}</dd></div>
           <div><dt>Tipo de oferta</dt><dd>${t.modalidade}</dd></div>
@@ -1448,7 +1451,7 @@ VIEWS['turma-detalhe'] = () => {
   return { crumbs:['Oferta formativa',['Turmas',"go('turmas')"], t.nome], html:`
   <div class="card">
     <div class="title-band band-light">
-      <div class="band-left"><span class="band-dot" style="${dotColor}"></span><b>${esc(t.nome)}</b><span class="band-sub">${t.codigo} · ${esc(nomesForms(t))}</span></div>
+      <div class="band-left"><span class="band-dot" style="${dotColor}"></span><b>${esc(t.nome)}</b>${t.privada ? `<span class="band-priv" title="Turma privada: inscrição apenas com o token de compartilhamento">${ico('lock')}Privada</span>` : ''}<span class="band-sub">${t.codigo} · ${esc(nomesForms(t))}</span></div>
       <div class="steps-tab compact">${tabs}</div>
     </div>
     <div class="body"><div class="stack">${body}</div></div>
