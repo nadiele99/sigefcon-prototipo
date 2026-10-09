@@ -1156,7 +1156,7 @@ function buildTurmaForm(o = {}, mode = 'page'){
   const blank = {codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), nome:'', privada:false, publico:'', etapa:'', modEnsino:'', modalidade:'', vagas:'', carga:'', inscIni:'', inscFim:'', realIni:'', realFim:'', turno:'', hIni:'', hFim:'', localId:''};
   const v = editing || (src ? {...blank, publico:src.publico, etapa:src.etapa, modEnsino:src.modEnsino, modalidade:src.modalidade, vagas:src.vagas, turno:src.turno, hIni:src.hIni, hFim:src.hFim, localId:src.localId} : blank);
   const aviso = src
-    ? alertBox('warn', `Reaproveitando ${esc(src.nome)}`, `Público, características, local e formadores foram copiados (formação de origem: ${esc(formDaTurma(src).titulo)}). Informe o nome, ${fixa ? '' : '<b>a nova formação</b>, '}e os <b>novos períodos</b>; inscrições e encontros não são copiados.`)
+    ? alertBox('warn', `Reaproveitando ${esc(src.nome)}`, `Público-alvo, características, local e formadores foram copiados (formação de origem: ${esc(formDaTurma(src).titulo)}). Informe o nome, ${fixa ? '' : '<b>a nova formação</b>, '}e os <b>novos períodos</b>; inscrições e encontros não são copiados.`)
     : fixa ? alertBox('info','', 'A turma nasce como oferta <b>desta formação</b>.')
     : editing ? alertBox('info','', 'Para mudar a formação desta turma, use <b>Trocar formação</b> no detalhe da turma.')
     : alertBox('info','', 'A turma é a oferta concreta de <b>uma formação</b>, escolhida na criação. Formações existem sem turma; turmas não existem sem formação.');
