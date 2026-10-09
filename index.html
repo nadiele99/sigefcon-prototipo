@@ -320,6 +320,7 @@ svg.lucide{stroke-width:2;}
 .switch:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .token-label{display:flex !important;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap;}
 .btn.btn-xs{width:24px;height:24px;padding:0;margin:-5px 0;} .btn.btn-xs svg{width:14px;height:14px;}
+.act-gap{display:inline-block;width:32px;height:1px;vertical-align:middle;}
 .name-line{display:flex;align-items:center;gap:6px;} .name-line .cell-main{text-align:left;}
 .priv-ico{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;border-radius:6px;background:#FEF3D6;color:#8A6100;cursor:help;} .priv-ico svg{width:12px;height:12px;}
 .sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:18px;border-top:1px solid var(--border);}
@@ -1106,6 +1107,7 @@ VIEWS['turmas'] = () => {
       <td>${n ? `<button class="btn-link" onclick="go('turma-detalhe',{id:'${t.id}',tab:'encontros'})">${n}</button>` : '<span class="muted">0</span>'}</td>
       <td>${badgeTurma(t)}</td>
       <td class="acts">
+        ${t.privada ? `<button class="btn btn-ghost btn-icon" title="Copiar token de compartilhamento (${t.codigo})" aria-label="Copiar token" onclick="copiarToken('${t.codigo}')">${ico('key-round')}</button>` : '<span class="act-gap" aria-hidden="true"></span>'}
         <button class="btn btn-ghost btn-icon" title="Cadastrar encontro desta turma" onclick="irParaNovoEncontro('${t.id}')">${ico('calendar-plus')}</button>
         <button class="btn btn-ghost btn-icon" title="Abrir turma" onclick="go('turma-detalhe',{id:'${t.id}'})">${ico('eye')}</button>
         <button class="btn btn-ghost btn-icon" title="Reaproveitar em outra formação" onclick="go('turma-form',{copyFrom:'${t.id}'})">${ico('copy')}</button>
