@@ -311,6 +311,16 @@ svg.lucide{stroke-width:2;}
 .per-range .muted{padding-bottom:9px;font-size:13px;}
 .seg-btn{display:inline-flex;align-items:center;gap:6px;} .seg-btn svg{width:14px;height:14px;}
 .head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.id-row{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+.id-nome{width:320px;max-width:100%;} .id-token{width:250px;} .id-token[hidden]{display:none;}
+.switch-row{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:500;color:var(--fg);height:36px;cursor:pointer;}
+.switch{position:relative;width:44px;height:24px;border-radius:999px;border:0;padding:0;background:#E4E4E7;cursor:pointer;transition:background .15s;flex-shrink:0;}
+.switch .thumb{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s;}
+.switch[aria-checked="true"]{background:var(--primary);} .switch[aria-checked="true"] .thumb{transform:translateX(20px);}
+.switch:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.token-label{display:flex !important;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap;}
+.btn.btn-xs{width:24px;height:24px;padding:0;margin:-5px 0;} .btn.btn-xs svg{width:14px;height:14px;}
+.priv{display:inline-flex;align-items:center;gap:3px;} .priv svg{width:12px;height:12px;}
 .sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:18px;border-top:1px solid var(--border);}
 .sec-title b{font-size:16px;font-weight:600;letter-spacing:-.01em;} .sec-title span{font-size:13.5px;color:var(--muted-fg);}
 .avatar-s{width:30px;height:30px;border-radius:50%;background:#EFF4FB;color:var(--navy-600);display:grid;place-items:center;font-size:11.5px;font-weight:600;flex-shrink:0;}
@@ -406,13 +416,13 @@ function seed(){
       {id:'F6', codigo:'FOR-2025-0019', titulo:'Introdução ao Moodle', ementa:'Navegação no ambiente virtual, criação de atividades, fóruns e acompanhamento de participação.', carga:16, modalidade:'EAD', publico:'Professores da rede estadual', projeto:'', area:'Tecnologia Educacional', tematica:'Ambientes virtuais', situacao:'Desativada'},
     ],
     turmas:[
-      {id:'T1', codigo:'TUR-2026-0011', nome:'GETAG – Turma A', formacaoId:'F2', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Híbrido', vagas:30, inscritos:28, inscIni:'2026-09-01', inscFim:'2026-09-15', realIni:'2026-09-21', realFim:'2026-10-30', turno:'Tarde', hIni:'14:00', hFim:'17:00', localId:'L2', formadores:[{formadorId:'P2', papel:'Titular', carga:20}]},
+      {id:'T1', codigo:'TUR-2026-0011', nome:'GETAG – Turma A', privada:true, formacaoId:'F2', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Híbrido', vagas:30, inscritos:28, inscIni:'2026-09-01', inscFim:'2026-09-15', realIni:'2026-09-21', realFim:'2026-10-30', turno:'Tarde', hIni:'14:00', hFim:'17:00', localId:'L2', formadores:[{formadorId:'P2', papel:'Titular', carga:20}]},
       {id:'T2', codigo:'TUR-2026-0012', nome:'NIG – Turma A', formacaoId:'F1', publico:'Servidores do NIG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Presencial', vagas:25, inscritos:12, inscIni:'2026-10-01', inscFim:'2026-10-20', realIni:'2026-10-26', realFim:'2026-12-04', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L1', formadores:[{formadorId:'P1', papel:'Titular', carga:40}]},
       {id:'T3', codigo:'TUR-2026-0013', nome:'Tabatinga – Turma 1', formacaoId:'F3', publico:'Professores da rede estadual', etapa:'Ensino Fundamental – Anos Iniciais', modEnsino:'Regular', modalidade:'Presencial', vagas:35, inscritos:35, inscIni:'2026-08-01', inscFim:'2026-08-20', realIni:'2026-08-25', realFim:'2026-10-10', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L3', formadores:[{formadorId:'P3', papel:'Titular', carga:40},{formadorId:'P4', papel:'Auxiliar', carga:20}]},
       {id:'T4', codigo:'TUR-2026-0014', nome:'GETAG – Turma B', formacaoId:'F4', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Híbrido', vagas:30, inscritos:0, inscIni:'2026-11-03', inscFim:'2026-11-14', realIni:'2026-11-23', realFim:'2026-12-18', turno:'Tarde', hIni:'14:00', hFim:'17:00', localId:'L2', formadores:[]},
       {id:'T5', codigo:'TUR-2026-0015', nome:'Parintins – Turma 1', formacaoId:'F3', publico:'Professores da rede estadual', etapa:'Ensino Fundamental – Anos Iniciais', modEnsino:'Regular', modalidade:'Presencial', vagas:35, inscritos:9, inscIni:'2026-10-05', inscFim:'2026-10-16', realIni:'2026-10-19', realFim:'2026-11-27', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L4', formadores:[{formadorId:'P3', papel:'Titular', carga:60}]},
       {id:'T6', codigo:'TUR-2026-0006', nome:'Manaus – Turma Piloto', formacaoId:'F3', publico:'Professores da rede estadual', etapa:'Ensino Fundamental – Anos Iniciais', modEnsino:'Regular', modalidade:'Presencial', vagas:30, inscritos:30, inscIni:'2026-04-01', inscFim:'2026-04-15', realIni:'2026-04-22', realFim:'2026-06-10', turno:'Tarde', hIni:'14:00', hFim:'18:00', localId:'L1', formadores:[{formadorId:'P3', papel:'Titular', carga:60}]},
-      {id:'T7', codigo:'TUR-2026-0007', nome:'GETAG – Turma Excel', formacaoId:'F1', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Presencial', vagas:20, inscritos:18, inscIni:'2026-05-04', inscFim:'2026-05-15', realIni:'2026-05-25', realFim:'2026-07-03', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L2', formadores:[{formadorId:'P1', papel:'Titular', carga:40}]},
+      {id:'T7', codigo:'TUR-2026-0007', nome:'GETAG – Turma Excel', privada:true, formacaoId:'F1', publico:'Servidores da GETAG', etapa:'Não se aplica', modEnsino:'Regular', modalidade:'Presencial', vagas:20, inscritos:18, inscIni:'2026-05-04', inscFim:'2026-05-15', realIni:'2026-05-25', realFim:'2026-07-03', turno:'Manhã', hIni:'08:00', hFim:'12:00', localId:'L2', formadores:[{formadorId:'P1', papel:'Titular', carga:40}]},
     ],
     encontros:[]
   };
@@ -951,7 +961,7 @@ VIEWS['formacao-painel'] = () => {
   const m = metricas(ts);
   const rows = ts.map(t => { const mt = metricas([t]), l = lById(t.localId);
     return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+(l?l.nome:'')).toLowerCase())}">
-      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}</div></td>
+      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}${t.privada ? ` · <span class="priv">${ico('lock')}Privada</span>` : ''}</div></td>
       <td>${badgeTurma(t)}</td>
       <td class="num">${fmt(t.realIni)} – ${fmt(t.realFim)}</td>
       <td>${l ? esc(l.nome) : '—'}</td>
@@ -1087,7 +1097,7 @@ VIEWS['turmas'] = () => {
   const rows = lista.map(t => {
     const fs = formsDaTurma(t), l = lById(t.localId), n = encAtivosDaTurma(t.id).length;
     return `<tr data-text="${esc((t.codigo+' '+t.nome+' '+fs.map(f=>f.titulo).join(' ')+' '+(l?l.nome:'')).toLowerCase())}">
-      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}</div></td>
+      <td><button class="btn-link cell-main" style="color:var(--fg)" onclick="go('turma-detalhe',{id:'${t.id}'})">${esc(t.nome)}</button><div class="cell-sub">${t.codigo}${t.privada ? ` · <span class="priv">${ico('lock')}Privada</span>` : ''}</div></td>
       <td>${fs.length ? `<div>${esc(fs[0].titulo)}</div><div class="cell-sub">${fs[0].carga}h · ${fs[0].modalidade}</div>` : `<span class="badge danger">${ico('unlink')}Sem formação</span>`}</td>
       <td>${l ? `<div>${esc(l.nome)}</div><div class="cell-sub">${esc(l.municipio)}</div>` : '—'}</td>
       <td class="num">${fmt(t.realIni)} – ${fmt(t.realFim)}</td>
@@ -1142,7 +1152,7 @@ function buildTurmaForm(o = {}, mode = 'page'){
   S.turmaModal = { id: o.id || null, ctx, mode };
   const sel = editing ? editing.formacaoId : (fixa || '');
   const listaF = DB.formacoes.filter(f => (f.situacao==='Ativa' && !(src && !fixa && f.id===src.formacaoId)) || f.id===sel);
-  const blank = {codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), nome:'', publico:'', etapa:'', modEnsino:'', modalidade:'', vagas:'', carga:'', inscIni:'', inscFim:'', realIni:'', realFim:'', turno:'', hIni:'', hFim:'', localId:''};
+  const blank = {codigo:'TUR-2026-'+String(DB.seq.turma).padStart(4,'0'), nome:'', privada:false, publico:'', etapa:'', modEnsino:'', modalidade:'', vagas:'', carga:'', inscIni:'', inscFim:'', realIni:'', realFim:'', turno:'', hIni:'', hFim:'', localId:''};
   const v = editing || (src ? {...blank, publico:src.publico, etapa:src.etapa, modEnsino:src.modEnsino, modalidade:src.modalidade, vagas:src.vagas, turno:src.turno, hIni:src.hIni, hFim:src.hFim, localId:src.localId} : blank);
   const aviso = src
     ? alertBox('warn', `Reaproveitando ${esc(src.nome)}`, `Público, características, local e formadores foram copiados (formação de origem: ${esc(formDaTurma(src).titulo)}). Informe o nome, ${fixa ? '' : '<b>a nova formação</b>, '}e os <b>novos períodos</b>; inscrições e encontros não são copiados.`)
@@ -1154,9 +1164,13 @@ function buildTurmaForm(o = {}, mode = 'page'){
     : fsec;
   const hr = mode === 'page' ? '' : '<hr class="sep">';
   const body = `${aviso}
-    ${sec('id-card','Identificação','Nome e código da turma', `<div class="grid g4">
-      <div class="field span3"><label>Nome da turma<span class="req">*</span></label><input id="t-nome" value="${esc(v.nome)}" placeholder="Ex.: GETAG – Turma A"></div>
-      <div class="field"><label>Código</label><input value="${v.codigo}" readonly></div></div>`)}
+    ${sec('id-card','Identificação','Nome da turma e acesso', `<div class="id-row">
+      <div class="field id-nome"><label for="t-nome">Nome da turma<span class="req">*</span></label><input id="t-nome" value="${esc(v.nome)}" placeholder="Ex.: GETAG – Turma A"></div>
+      <label class="switch-row"><button type="button" role="switch" id="t-priv" class="switch" aria-checked="${v.privada ? 'true' : 'false'}" onclick="togglePrivada(this)"><span class="thumb"></span></button>Tornar turma privada</label>
+      <div class="field id-token" id="t-token-wrap" ${v.privada ? '' : 'hidden'}>
+        <label class="token-label">Token de compartilhamento<button type="button" class="btn btn-ghost btn-icon btn-xs" title="Copiar token" onclick="copiarToken('${v.codigo}')">${ico('copy')}</button></label>
+        <input value="${v.codigo}" readonly></div>
+    </div>`)}
     ${hr}
     ${sec('book-open','Formação','Curso que esta turma oferta', `<div class="grid g2" style="align-items:end">
       <div class="field"><label>Formação<span class="req">*</span></label><select id="t-form" onchange="updFormInfo(true)" ${fixa || editing ? 'disabled' : ''}>${opts(listaF.map(f => [f.id, `${f.titulo} · ${f.codigo}`]), sel, 'Selecione a formação')}</select><span class="hint" id="form-info"></span></div>
@@ -1215,6 +1229,15 @@ VIEWS['turma-form'] = () => {
     </div></div>
   </div>`, after: () => { renderDraft(); updFormInfo(); } };
 };
+function togglePrivada(btn){
+  const on = btn.getAttribute('aria-checked') !== 'true';
+  btn.setAttribute('aria-checked', on ? 'true' : 'false');
+  document.getElementById('t-token-wrap').hidden = !on;
+}
+function copiarToken(tok){
+  try { navigator.clipboard && navigator.clipboard.writeText(tok); } catch(e){}
+  toast(`Token ${tok} copiado.`);
+}
 function updFormInfo(trocou){
   const el = $('form-info'); if (!el) return;
   const f = fById($('t-form').value), c = $('t-carga');
@@ -1242,7 +1265,7 @@ function addDraft(){
 
 function salvarTurma(next){
   const g = id => $(id).value.trim();
-  const d = {nome:g('t-nome'), publico:g('t-publico'), etapa:g('t-etapa'), modEnsino:g('t-modens'), modalidade:g('t-mod'), vagas:+g('t-vagas'), carga:+g('t-carga'),
+  const d = {nome:g('t-nome'), privada:document.getElementById('t-priv').getAttribute('aria-checked')==='true', publico:g('t-publico'), etapa:g('t-etapa'), modEnsino:g('t-modens'), modalidade:g('t-mod'), vagas:+g('t-vagas'), carga:+g('t-carga'),
     inscIni:g('t-ii'), inscFim:g('t-if'), realIni:g('t-ri'), realFim:g('t-rf'), turno:g('t-turno'), hIni:g('t-hi'), hFim:g('t-hf'), localId:g('t-local')};
   const formacaoId = $('t-form').value;
   const falta = [];
@@ -1328,6 +1351,7 @@ VIEWS['turma-detalhe'] = () => {
       <div class="ui-card">
         ${cardHead('info','Informações da turma', t.codigo, badgeTurma(t))}
         <div class="ui-card-c"><dl class="dl">
+          <div><dt>Acesso</dt><dd>${t.privada ? `<span class="badge neutral">${ico('lock')}Privada</span> <span class="muted">token ${t.codigo}</span>` : 'Aberta'}</dd></div>
           <div><dt>Público-alvo</dt><dd>${esc(t.publico)}</dd></div>
           <div><dt>Etapa</dt><dd>${esc(t.etapa||'—')}</dd></div>
           <div><dt>Tipo de oferta</dt><dd>${t.modalidade}</dd></div>
