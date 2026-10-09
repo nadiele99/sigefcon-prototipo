@@ -36,7 +36,26 @@ html,body{margin:0;padding:0;background:#3a3d44;font-family:"Segoe UI",Roboto,Ar
 /* =====================================================================
    2. ESTRUTURA (inalterada)
    ===================================================================== */
-.proto-bar{background:#20222A;color:#fff;font-size:13px;padding:10px 18px;position:sticky;top:0;z-index:200;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.proto-bar{background:#20222A;color:#fff;font-size:13px;padding:8px 18px;position:sticky;top:0;z-index:200;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.fb-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.fb-row.sub{border-top:1px solid #33363f;padding-top:8px;justify-content:space-between;}
+.fb-title{white-space:nowrap;}
+.fb-steps{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:0 auto;}
+.fb-step{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid #3a3e4a;color:#9fa3b3;font-size:12.5px;font-weight:600;padding:5px 12px 5px 6px;border-radius:20px;cursor:pointer;}
+.fb-step .fb-n{width:20px;height:20px;border-radius:50%;background:#2c2f3a;color:#cfd6e6;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.fb-step:hover{border-color:#5b6178;color:#fff;}
+.fb-step.done{color:#7CD68C;} .fb-step.done .fb-n{background:#1f3b2a;color:#7CD68C;}
+.fb-step.current{background:#F4C430;border-color:#F4C430;color:#1A1D26;} .fb-step.current .fb-n{background:#1A1D26;color:#F4C430;}
+.fb-arrow{display:inline-flex;color:#5b6178;} .fb-arrow svg{width:14px;height:14px;} .fb-arrow.sm svg{width:12px;height:12px;}
+.fb-telas{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;}
+.fb-lbl{color:#8b90a0;margin-right:2px;}
+.fb-tela{background:transparent;border:0;color:#cfd6e6;font-size:12px;padding:3px 8px;border-radius:6px;cursor:pointer;}
+.fb-tela:hover{background:#2c2f3a;} .fb-tela.done{color:#7CD68C;} .fb-tela.current{background:#2c2f3a;color:#F4C430;font-weight:700;}
+.fb-nav{display:flex;gap:6px;}
+.fb-pn{display:inline-flex;align-items:center;gap:8px;background:#2c2f3a;border:0;color:#fff;font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer;text-align:left;line-height:1.15;}
+.fb-pn small{display:block;font-size:10px;color:#8b90a0;text-transform:uppercase;letter-spacing:.04em;}
+.fb-pn:hover:not([disabled]){background:var(--navy-600);} .fb-pn[disabled]{opacity:.45;cursor:default;}
+.fb-pn svg{width:14px;height:14px;}
 .proto-bar b{color:#F4C430;}
 .proto-bar .seg{display:flex;gap:4px;background:#2c2f3a;border-radius:8px;padding:3px;}
 .proto-bar .seg button{background:transparent;border:none;color:#cfd6e6;font-size:12px;padding:5px 10px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
@@ -44,20 +63,6 @@ html,body{margin:0;padding:0;background:#3a3d44;font-family:"Segoe UI",Roboto,Ar
 .proto-bar .seg svg{width:13px;height:13px;}
 
 .shell{display:flex;min-height:100vh;background:var(--bg);}
-.sidebar{display:flex;width:196px;background:var(--navy-900);flex-direction:column;align-items:stretch;padding:18px 14px;gap:16px;flex-shrink:0;}
-.sidebar .avatar{width:38px;height:38px;border-radius:50%;background:var(--navy-600);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;align-self:flex-start;}
-.sidebar-steps{display:flex;flex-direction:column;gap:6px;}
-.sidebar-steps .sidebar-steps-label{color:#6b7590;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:0 2px 2px 2px;}
-.sidebar-steps button{background:transparent;border:1px solid #2c3a5a;color:#9fa3b3;padding:9px 12px;border-radius:8px;font-size:12.5px;cursor:pointer;text-align:left;line-height:1.3;display:flex;align-items:center;gap:8px;}
-.sidebar-steps button svg{width:15px;height:15px;flex-shrink:0;}
-.sidebar-steps button.current{background:var(--yellow);color:#1A1D26;border-color:var(--yellow);font-weight:700;}
-.sidebar-steps button.done{color:#7CD68C;}
-.sidebar-steps button.group{border-color:transparent;color:#cfd6e6;font-weight:700;padding-left:4px;}
-.sidebar-steps button.group .chev{margin-left:auto;transition:transform .15s;}
-.sidebar-steps button.group.closed .chev{transform:rotate(-90deg);}
-.sidebar-steps button.lvl1{margin-left:6px;}
-.sidebar-steps button.lvl2{margin-left:22px;font-size:12px;}
-.sidebar-steps .menu-hint{color:#6b7590;font-size:10.5px;margin:6px 2px 0;line-height:1.4;}
 .main{flex:1;display:flex;flex-direction:column;min-width:0;}
 .topnav{background:var(--white);margin:16px 16px 0 16px;border-radius:var(--radius);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
 .topnav .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--navy-700);}
@@ -380,10 +385,7 @@ svg.lucide{stroke-width:2;}
 </head>
 <body>
 
-<div class="proto-bar">
-  <div><b>SIGEFCON</b> · protótipo de fluxo (baixa fidelidade) — Formações, Turmas e Encontros</div>
-  <div class="seg"><button onclick="resetData()"><i data-lucide="rotate-ccw"></i>Reiniciar dados</button></div>
-</div>
+<div class="proto-bar" id="proto-bar"></div>
 
 <div id="app"></div>
 <div id="modal-root"></div>
@@ -455,12 +457,15 @@ function resetData(){ DB = seed(); buildEncontros(); S.visited = new Set(); S.fi
    ========================================================= */
 const S = { per:{modo:'mensal', ref:TODAY}, perP:{modo:'mensal', ref:TODAY, ini:null, fim:null}, screen:'painel', params:{}, visited:new Set(), menuOpen:true, filtroFormacao:'todas', filtroTurma:'todas', draft:[] };
 
-const MENU = [
-  {id:'painel', label:'Painel', icon:'layout-dashboard', lvl:1},
-  {id:'formacoes', label:'Formações', icon:'book-open', lvl:1},
-  {id:'turmas', label:'Turmas', icon:'users', lvl:1},
-  {id:'encontros', label:'Encontros', icon:'calendar-days', lvl:2},
+/* Fluxo do protótipo: etapas em ordem e as telas de cada etapa.
+   Navegação de protótipo (fica na barra escura do topo) — NÃO faz parte da interface do sistema. */
+const FLOW = [
+  {id:'painel',    label:'Painel',    icon:'layout-dashboard', telas:[['painel','Painel geral']]},
+  {id:'formacoes', label:'Formações', icon:'book-open',        telas:[['formacoes','Catálogo'],['formacao-form','Nova formação'],['formacao-painel','Painel da formação',{id:'F2'}]]},
+  {id:'turmas',    label:'Turmas',    icon:'users',            telas:[['turmas','Lista de turmas'],['turma-form','Nova turma'],['turma-detalhe','Detalhe da turma',{id:'T1'}]]},
+  {id:'encontros', label:'Encontros', icon:'calendar-days',    telas:[['encontros','Encontros']]},
 ];
+const TELAS = FLOW.flatMap(e => e.telas.map(([id, label, params]) => ({ id, label, params: params || {}, etapa: e.id })));
 const SECTION = { 'painel':'painel', 'formacoes':'formacoes', 'formacao-painel':'formacoes', 'formacao-form':'formacoes', 'turmas':'turmas', 'turma-form':'turmas', 'turma-detalhe':'turmas', 'encontros':'encontros' };
 
 /* =========================================================
@@ -789,7 +794,7 @@ function toast(msg, type){
    NAVEGAÇÃO
    ========================================================= */
 function go(id, params){
-  if (S.screen) S.visited.add(SECTION[S.screen]);
+  if (S.screen) S.visited.add(S.screen);
   S.screen = id;
   S.params = params || {};
   S.rp = null;
@@ -805,7 +810,6 @@ function render(){
   $('app').innerHTML = `
   <div class="screen">
     <div class="shell">
-      ${sidebar()}
       <div class="main">
         <div class="topnav">
           <div class="brand"><span class="dot"></span>SIGEFCON</div>
@@ -821,27 +825,40 @@ function render(){
       </div>
     </div>
   </div>`;
+  renderFlowBar();
   icons();
   if (v.after) v.after();
 }
 
-function sidebar(){
-  const sec = SECTION[S.screen];
-  const items = MENU.map(m => {
-    const cls = ['lvl'+m.lvl];
-    if (m.id === sec) cls.push('current'); else if (S.visited.has(m.id)) cls.push('done');
-    return `<button class="${cls.join(' ')}" onclick="go('${m.id}')">${ico(m.lvl===2?'corner-down-right':m.icon)}${m.label}</button>`;
+/* ---- Barra do protótipo: etapas do fluxo, telas da etapa, anterior/próxima ---- */
+function irTela(i){ const t = TELAS[i]; if (t) go(t.id, {...t.params}); }
+function renderFlowBar(){
+  const etapaAtual = SECTION[S.screen];
+  const idx = TELAS.findIndex(t => t.id === S.screen);
+  const etapas = FLOW.map((e, i) => {
+    const cls = e.id === etapaAtual ? 'current' : e.telas.some(([id]) => S.visited.has(id)) ? 'done' : '';
+    const first = TELAS.findIndex(t => t.etapa === e.id);
+    return `${i ? `<span class="fb-arrow">${ico('chevron-right')}</span>` : ''}<button class="fb-step ${cls}" onclick="irTela(${first})"><span class="fb-n">${i+1}</span>${e.label}</button>`;
   }).join('');
-  return `
-  <div class="sidebar">
-    <div class="avatar">A</div>
-    <div class="sidebar-steps">
-      <div class="sidebar-steps-label">Menu</div>
-      <button class="group ${S.menuOpen?'':'closed'}" onclick="S.menuOpen=!S.menuOpen;render()">${ico('graduation-cap')}Oferta formativa${ico('chevron-down','class="chev"')}</button>
-      ${S.menuOpen ? items : ''}
-      <div class="menu-hint">Formações existem sozinhas no catálogo; cada turma oferta uma formação.</div>
+  const etapa = FLOW.find(e => e.id === etapaAtual);
+  const telas = etapa.telas.map(([id, label], k) => {
+    const i = TELAS.findIndex(t => t.id === id);
+    return `${k ? `<span class="fb-arrow sm">${ico('arrow-right')}</span>` : ''}<button class="fb-tela ${id === S.screen ? 'current' : S.visited.has(id) ? 'done' : ''}" onclick="irTela(${i})">${label}</button>`;
+  }).join('');
+  const ant = TELAS[idx-1], prox = TELAS[idx+1];
+  $('proto-bar').innerHTML = `
+    <div class="fb-row">
+      <div class="fb-title"><b>SIGEFCON</b> · protótipo de fluxo (baixa fidelidade)</div>
+      <nav class="fb-steps" aria-label="Etapas do fluxo">${etapas}</nav>
+      <div class="seg"><button onclick="resetData()">${ico('rotate-ccw')}Reiniciar dados</button></div>
     </div>
-  </div>`;
+    <div class="fb-row sub">
+      <div class="fb-telas"><span class="fb-lbl">Telas da etapa ${FLOW.indexOf(etapa)+1}:</span>${telas}</div>
+      <div class="fb-nav">
+        <button class="fb-pn" ${ant ? `onclick="irTela(${idx-1})"` : 'disabled'} title="${ant ? 'Vem antes: ' + ant.label : 'Início do fluxo'}">${ico('arrow-left')}${ant ? `<span><small>Antes</small>${ant.label}</span>` : '<span>Início do fluxo</span>'}</button>
+        <button class="fb-pn" ${prox ? `onclick="irTela(${idx+1})"` : 'disabled'} title="${prox ? 'Vem depois: ' + prox.label : 'Fim do fluxo'}">${prox ? `<span><small>Depois</small>${prox.label}</span>` : '<span>Fim do fluxo</span>'}${ico('arrow-right')}</button>
+      </div>
+    </div>`;
 }
 
 function breadcrumb(crumbs){
